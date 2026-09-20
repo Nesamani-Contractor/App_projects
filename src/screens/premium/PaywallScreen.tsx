@@ -48,7 +48,7 @@ export default function PaywallScreen({ navigation, route }: Props) {
           </Pressable>
 
           <View style={styles.iconWrap}>
-            <Ionicons name="diamond" size={30} color={colors.goldLight} />
+            <Ionicons name="diamond" size={30} color={colors.ivory} />
           </View>
           <Text style={styles.title}>Unlock Your Full Glow Up</Text>
           <Text style={styles.subtitle}>
@@ -58,7 +58,7 @@ export default function PaywallScreen({ navigation, route }: Props) {
           <View style={styles.featureList}>
             {PREMIUM_FEATURES.map((f) => (
               <View style={styles.featureRow} key={f.label}>
-                <Ionicons name={f.icon as any} size={18} color={colors.goldLight} />
+                <Ionicons name={f.icon as any} size={18} color={colors.ivory} />
                 <Text style={styles.featureText}>{f.label}</Text>
               </View>
             ))}
@@ -83,7 +83,7 @@ export default function PaywallScreen({ navigation, route }: Props) {
             ))}
           </View>
 
-          <GradientButton label="Start Free Trial" icon="sparkles" onPress={startTrial} />
+          <GradientButton label="Start Free Trial" icon="sparkles" variant="white" onPress={startTrial} />
           <Pressable onPress={dismiss} style={styles.notNow}>
             <Text style={styles.notNowText}>Not now</Text>
           </Pressable>
@@ -144,11 +144,11 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
     alignItems: 'center',
   },
-  planCardSelected: { borderColor: colors.goldLight, backgroundColor: 'rgba(255,255,255,0.18)' },
+  planCardSelected: { borderColor: colors.ivory, backgroundColor: 'rgba(255,255,255,0.18)' },
   planBadge: {
     position: 'absolute',
     top: -10,
-    backgroundColor: colors.goldLight,
+    backgroundColor: colors.ivory,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: radii.pill,

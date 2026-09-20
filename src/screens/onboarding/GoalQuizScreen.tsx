@@ -32,6 +32,7 @@ export default function GoalQuizScreen({ navigation }: Props) {
         <GradientButton
           label="Continue"
           icon="arrow-forward"
+          variant="white"
           disabled={!selected}
           onPress={() => selected && navigation.navigate('StyleQuiz', { goalId: selected })}
         />
@@ -47,13 +48,13 @@ const styles = StyleSheet.create({
     fontFamily: typography.bodySemiBold,
     fontSize: 12,
     letterSpacing: 2,
-    color: colors.lavenderDeep,
+    color: 'rgba(255,255,255,0.85)',
     textAlign: 'center',
   },
   title: {
     fontFamily: typography.display,
     fontSize: 24,
-    color: colors.violetDeep,
+    color: colors.ivory,
     textAlign: 'center',
     marginTop: spacing.xs,
     marginBottom: spacing.lg,

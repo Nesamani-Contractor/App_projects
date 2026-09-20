@@ -7,15 +7,16 @@ export const colors = {
   berry: '#C24A72',
   plum: '#5A2340',
 
-  // Gold accents
-  gold: '#D9A94E',
-  goldLight: '#F1D28A',
-  goldDeep: '#B8862F',
+  // Accent — matched from Glam Up's App Store screenshots (pixel-sampled):
+  // gradient top #FC7295, gradient bottom #FFAFC3, button/accent #FB6F95
+  gold: '#FB6F95',
+  goldLight: '#FFAFC3',
+  goldDeep: '#E5487A',
 
-  // Glam Up-style lavender accent (onboarding / paywall)
-  lavender: '#C9AEE8',
-  lavenderDeep: '#8E5FC7',
-  violetDeep: '#4A2E7A',
+  // Onboarding / paywall accent (same Glam Up pink family)
+  lavender: '#FFAFC3',
+  lavenderDeep: '#F0527A',
+  violetDeep: '#DB3C6B',
 
   // Neutrals
   ivory: '#FFFBF6',
@@ -33,21 +34,22 @@ export const colors = {
 };
 
 export const gradients = {
-  heroBackground: ['#FFE4EC', '#FBD4E4', '#F3C6D9'] as const,
-  goldButton: ['#F1D28A', '#D9A94E', '#B8862F'] as const,
-  goldButtonPressed: ['#D9A94E', '#B8862F', '#9C6E23'] as const,
+  // Exact Glam Up marketing-screenshot gradient (top → bottom)
+  heroBackground: ['#FC7295', '#FD8FAB', '#FFAFC3'] as const,
+  goldButton: ['#FD8CA8', '#FB6F95', '#E5487A'] as const,
+  goldButtonPressed: ['#FB6F95', '#E5487A', '#C93058'] as const,
   cardSheen: ['rgba(255,255,255,0.65)', 'rgba(255,255,255,0.15)'] as const,
-  vaultHeader: ['#5A2340', '#8A3A63', '#C24A72'] as const,
-  viewfinderGlow: ['rgba(217,169,78,0.9)', 'rgba(247,168,196,0.2)'] as const,
+  vaultHeader: ['#FD7C9E', '#FB6F95', '#E5487A'] as const,
+  viewfinderGlow: ['rgba(251,111,149,0.9)', 'rgba(255,175,195,0.2)'] as const,
   softGirl: ['#FFE9F0', '#FFC9DE', '#F7A8C4'] as const,
   naturalGlam: ['#FFF3E1', '#F6D9A8', '#D9A94E'] as const,
   softGrunge: ['#E3D3E8', '#B79BC4', '#6E4C7A'] as const,
   latinaBestie: ['#FFD6A5', '#F2745A', '#B8324B'] as const,
   fullGlam: ['#3A2440', '#7A2E52', '#C24A72'] as const,
   sweetSpicy: ['#FFCB77', '#FF8FA3', '#C4467A'] as const,
-  chooseForMe: ['#F7A8C4', '#D9A94E', '#F7A8C4'] as const,
-  glamUpOnboarding: ['#FBD9EC', '#E5C6F0', '#C9AEE8'] as const,
-  glamUpPaywall: ['#4A2E7A', '#7A3E9E', '#C9548F'] as const,
+  chooseForMe: ['#FC7295', '#FB6F95', '#FFAFC3'] as const,
+  glamUpOnboarding: ['#FC7295', '#FD8FAB', '#FFAFC3'] as const,
+  glamUpPaywall: ['#E5487A', '#FB6F95', '#FD8FAB'] as const,
 };
 
 export const typography = {

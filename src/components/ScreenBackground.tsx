@@ -37,6 +37,6 @@ const styles = StyleSheet.create({
     height: 320,
     bottom: -140,
     left: -100,
-    backgroundColor: 'rgba(217,169,78,0.14)',
+    backgroundColor: 'rgba(229,72,122,0.14)',
   },
 });

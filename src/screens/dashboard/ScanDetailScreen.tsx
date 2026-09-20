@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 8,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(217,169,78,0.15)',
+    borderTopColor: 'rgba(229,72,122,0.15)',
   },
   traitLabel: { fontFamily: typography.body, fontSize: 12.5, color: colors.slate },
   traitValue: { fontFamily: typography.bodySemiBold, fontSize: 12.5, color: colors.berry },

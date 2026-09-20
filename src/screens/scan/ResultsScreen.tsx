@@ -47,7 +47,7 @@ export default function ResultsScreen({ route, navigation }: Props) {
       <LinearGradient colors={gradients.vaultHeader} style={styles.header}>
         <SafeAreaView edges={['top']}>
           <View style={styles.headerTop}>
-            <GoldBadge icon="time-outline" label={formatDateTime(timestamp)} />
+            <GoldBadge icon="time-outline" label={formatDateTime(timestamp)} tone="onPink" />
             <View style={styles.scoreChip}>
               <Ionicons name="sparkles" size={12} color={colors.plum} />
               <Text style={styles.scoreChipText}>{score} Shine Score</Text>
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   scoreChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.goldLight,
+    backgroundColor: 'rgba(255,255,255,0.9)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: radii.pill,
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   headerEyebrow: {
     fontFamily: typography.bodySemiBold,
     fontSize: 12,
-    color: colors.goldLight,
+    color: 'rgba(255,255,255,0.85)',
     letterSpacing: 2,
     marginTop: spacing.lg,
   },
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(217,169,78,0.15)',
+    borderTopColor: 'rgba(229,72,122,0.15)',
   },
   traitLabel: { fontFamily: typography.bodySemiBold, fontSize: 13, color: colors.plum },
   traitNote: { fontFamily: typography.body, fontSize: 11.5, color: colors.slate, marginTop: 1 },
@@ -252,6 +252,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingVertical: spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(217,169,78,0.15)',
+    borderTopColor: 'rgba(229,72,122,0.15)',
   },
 });

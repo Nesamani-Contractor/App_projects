@@ -16,7 +16,7 @@ type Props = {
   label: string;
   onPress?: (e: GestureResponderEvent) => void;
   icon?: keyof typeof Ionicons.glyphMap;
-  variant?: 'gold' | 'outline' | 'dark';
+  variant?: 'gold' | 'outline' | 'dark' | 'white';
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
   disabled?: boolean;
@@ -48,6 +48,25 @@ export const GradientButton = ({
       >
         {icon && <Ionicons name={icon} size={18} color={colors.berry} style={styles.icon} />}
         <Text style={[styles.outlineText, textStyle]}>{label}</Text>
+      </Pressable>
+    );
+  }
+
+  if (variant === 'white') {
+    return (
+      <Pressable
+        onPress={onPress}
+        disabled={disabled}
+        style={({ pressed }) => [
+          styles.white,
+          fullWidth && styles.fullWidth,
+          pressed && { opacity: 0.85 },
+          disabled && styles.disabled,
+          style,
+        ]}
+      >
+        {icon && <Ionicons name={icon} size={18} color={colors.goldDeep} style={styles.icon} />}
+        <Text style={[styles.whiteText, textStyle]}>{label}</Text>
       </Pressable>
     );
   }
@@ -105,6 +124,25 @@ const styles = StyleSheet.create({
     color: colors.berry,
     fontFamily: typography.bodySemiBold,
     fontSize: 15,
+  },
+  white: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: radii.pill,
+    backgroundColor: colors.ivory,
+    shadowColor: 'rgba(0,0,0,0.2)',
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 4,
+  },
+  whiteText: {
+    color: colors.goldDeep,
+    fontFamily: typography.bodySemiBold,
+    fontSize: 15,
+    letterSpacing: 0.3,
   },
   icon: { marginRight: 8 },
   disabled: { opacity: 0.5 },

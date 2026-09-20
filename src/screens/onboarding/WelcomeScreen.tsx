@@ -27,7 +27,7 @@ export default function WelcomeScreen({ navigation }: Props) {
             'Discover the makeup look made for you',
           ].map((f) => (
             <View style={styles.featureRow} key={f}>
-              <Ionicons name="checkmark-circle" size={18} color={colors.violetDeep} />
+              <Ionicons name="checkmark-circle" size={18} color={colors.ivory} />
               <Text style={styles.featureText}>{f}</Text>
             </View>
           ))}
@@ -36,6 +36,7 @@ export default function WelcomeScreen({ navigation }: Props) {
         <GradientButton
           label="Get Started"
           icon="arrow-forward"
+          variant="white"
           onPress={() => navigation.navigate('GoalQuiz')}
           style={{ marginTop: spacing.xl }}
         />
@@ -60,13 +61,13 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: typography.display,
     fontSize: 34,
-    color: colors.violetDeep,
+    color: colors.ivory,
     textAlign: 'center',
   },
   tagline: {
     fontFamily: typography.body,
     fontSize: 14,
-    color: colors.plum,
+    color: 'rgba(255,255,255,0.9)',
     textAlign: 'center',
     marginTop: spacing.sm,
     paddingHorizontal: spacing.md,
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
   featureText: {
     fontFamily: typography.bodyMedium,
     fontSize: 13.5,
-    color: colors.violetDeep,
+    color: colors.ivory,
     marginLeft: 10,
   },
 });

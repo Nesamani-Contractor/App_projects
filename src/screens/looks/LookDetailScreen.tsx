@@ -9,7 +9,7 @@ import { getLookById, LOOKS, LookId } from '../../data/looks';
 import { GeneratedPortrait } from '../../components/GeneratedPortrait';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { GradientButton } from '../../components/GradientButton';
-import { colors, radii, spacing, typography } from '../../theme/colors';
+import { colors, gradients, radii, spacing, typography } from '../../theme/colors';
 
 type Props = NativeStackScreenProps<LooksStackParamList, 'LookDetail'>;
 
@@ -49,10 +49,10 @@ export default function LookDetailScreen({ route, navigation }: Props) {
 
   if (isChooseForMe && picking) {
     return (
-      <LinearGradient colors={['#3A2440', '#5A2340', '#8A3A63']} style={styles.fill}>
+      <LinearGradient colors={gradients.vaultHeader} style={styles.fill}>
         <SafeAreaView style={styles.pickingCenter}>
           <View style={styles.pickingRing}>
-            <Ionicons name="shuffle-outline" size={30} color={colors.goldLight} />
+            <Ionicons name="shuffle-outline" size={30} color={colors.ivory} />
           </View>
           <Text style={styles.pickingTitle}>Choosing your shine…</Text>
           <Text style={styles.pickingSubtitle}>
@@ -200,9 +200,9 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: 'rgba(217,169,78,0.2)',
+    backgroundColor: 'rgba(255,255,255,0.2)',
     borderWidth: 1,
-    borderColor: 'rgba(217,169,78,0.5)',
+    borderColor: 'rgba(255,255,255,0.5)',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.lg,

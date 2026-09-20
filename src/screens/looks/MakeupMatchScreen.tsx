@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: 'rgba(217,169,78,0.2)',
+    borderColor: 'rgba(229,72,122,0.2)',
     borderStyle: 'dashed',
   },
   placeholderText: {

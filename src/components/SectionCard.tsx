@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
     elevation: 3,
     borderWidth: 1,
-    borderColor: 'rgba(217,169,78,0.18)',
+    borderColor: 'rgba(229,72,122,0.18)',
   },
   header: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm },
   iconWrap: {

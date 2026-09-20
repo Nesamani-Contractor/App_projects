@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ScanStackParamList } from '../../navigation/types';
-import { colors, typography } from '../../theme/colors';
+import { colors, gradients, typography } from '../../theme/colors';
 import { COLOR_SEASONS } from '../../data/colorSeasons';
 
 type Props = NativeStackScreenProps<ScanStackParamList, 'Analyzing'>;
@@ -55,19 +55,19 @@ export default function AnalyzingScreen({ navigation }: Props) {
   const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
 
   return (
-    <LinearGradient colors={['#3A2440', '#5A2340', '#8A3A63']} style={styles.fill}>
+    <LinearGradient colors={gradients.vaultHeader} style={styles.fill}>
       <View style={styles.center}>
         <View style={styles.ringWrap}>
           <Animated.View style={[styles.ring, { transform: [{ rotate }] }]}>
             <LinearGradient
-              colors={['#D9A94E', 'rgba(217,169,78,0)']}
+              colors={['#FFFFFF', 'rgba(255,255,255,0)']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.ringGradient}
             />
           </Animated.View>
           <View style={styles.ringInner}>
-            <Ionicons name="sparkles" size={30} color={colors.goldLight} />
+            <Ionicons name="sparkles" size={30} color={colors.ivory} />
           </View>
         </View>
 
@@ -79,7 +79,7 @@ export default function AnalyzingScreen({ navigation }: Props) {
               <Ionicons
                 name={i <= stepIndex ? 'checkmark-circle' : step.icon}
                 size={16}
-                color={i <= stepIndex ? colors.goldLight : 'rgba(255,255,255,0.45)'}
+                color={i <= stepIndex ? colors.ivory : 'rgba(255,255,255,0.45)'}
               />
               <Text style={[styles.stepText, i <= stepIndex && styles.stepTextActive]}>
                 {step.label}
@@ -102,11 +102,11 @@ const styles = StyleSheet.create({
     width: 108,
     height: 108,
     borderRadius: 54,
-    backgroundColor: 'rgba(58,36,48,0.9)',
+    backgroundColor: 'rgba(229,72,122,0.85)',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(217,169,78,0.5)',
+    borderColor: 'rgba(255,255,255,0.5)',
   },
   title: {
     fontFamily: typography.display,

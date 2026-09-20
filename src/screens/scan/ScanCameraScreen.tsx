@@ -15,7 +15,7 @@ import * as Haptics from 'expo-haptics';
 import { ScanStackParamList } from '../../navigation/types';
 import { CircularViewfinder } from '../../components/CircularViewfinder';
 import { DoDontCard } from '../../components/DoDontCard';
-import { colors, typography } from '../../theme/colors';
+import { colors, gradients, typography } from '../../theme/colors';
 
 const { width } = Dimensions.get('window');
 
@@ -102,7 +102,7 @@ export default function ScanCameraScreen({ navigation }: Props) {
               ]}
             >
               <LinearGradient
-                colors={['#F1D28A', '#D9A94E', '#B8862F']}
+                colors={gradients.goldButton}
                 style={styles.captureInner}
               >
                 <Ionicons name="sparkles" size={26} color={colors.ivory} />

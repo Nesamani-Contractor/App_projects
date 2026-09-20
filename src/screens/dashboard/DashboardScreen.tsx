@@ -29,7 +29,7 @@ export default function DashboardScreen({ navigation }: Props) {
               <Text style={styles.title}>Beauty History</Text>
             </View>
             <View style={styles.avatarBadge}>
-              <Ionicons name="sparkles" size={20} color={colors.goldLight} />
+              <Ionicons name="sparkles" size={20} color={colors.ivory} />
             </View>
           </View>
 
@@ -62,7 +62,7 @@ export default function DashboardScreen({ navigation }: Props) {
             onPress={() => (navigation.getParent() as any)?.getParent()?.navigate('Paywall', { source: 'dashboard' })}
           >
             <LinearGradient colors={gradients.glamUpPaywall} style={styles.premiumBanner}>
-              <Ionicons name="diamond" size={20} color={colors.goldLight} />
+              <Ionicons name="diamond" size={20} color={colors.ivory} />
               <View style={{ flex: 1, marginLeft: spacing.sm }}>
                 <Text style={styles.premiumBannerTitle}>Go Premium</Text>
                 <Text style={styles.premiumBannerSubtitle}>Unlock unlimited scans & every feature</Text>
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     fontFamily: typography.bodySemiBold,
     fontSize: 11,
     letterSpacing: 2,
-    color: colors.goldLight,
+    color: 'rgba(255,255,255,0.85)',
   },
   title: { fontFamily: typography.display, fontSize: 26, color: colors.ivory, marginTop: 2 },
   avatarBadge: {
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   sectionBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(217,169,78,0.16)',
+    backgroundColor: 'rgba(229,72,122,0.14)',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: radii.pill,

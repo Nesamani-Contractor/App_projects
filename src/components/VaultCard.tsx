@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { ScanRecord } from '../data/mockHistory';
 import { getLookById } from '../data/looks';
 import { COLOR_SEASONS } from '../data/colorSeasons';
-import { colors, radii, spacing, typography } from '../theme/colors';
+import { colors, gradients, radii, spacing, typography } from '../theme/colors';
 import { formatDateTime, formatRelative } from '../utils/formatDate';
 
 export const VaultCard = ({
@@ -21,7 +21,7 @@ export const VaultCard = ({
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [styles.wrap, pressed && { opacity: 0.92 }]}>
       <LinearGradient
-        colors={(look?.gradient ?? ['#F7A8C4', '#D9A94E']) as any}
+        colors={(look?.gradient ?? gradients.heroBackground) as any}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.thumb}
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     elevation: 2,
     borderWidth: 1,
-    borderColor: 'rgba(217,169,78,0.14)',
+    borderColor: 'rgba(229,72,122,0.14)',
   },
   thumb: {
     width: 52,

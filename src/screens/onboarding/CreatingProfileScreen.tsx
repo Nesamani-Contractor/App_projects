@@ -33,7 +33,7 @@ export default function CreatingProfileScreen({ navigation, route }: Props) {
     <LinearGradient colors={gradients.glamUpOnboarding} style={styles.fill}>
       <View style={styles.center}>
         <Animated.View style={[styles.ring, { transform: [{ rotate }] }]}>
-          <Ionicons name="sparkles" size={28} color={colors.violetDeep} />
+          <Ionicons name="sparkles" size={28} color={colors.ivory} />
         </Animated.View>
         <Text style={styles.title}>Creating your beauty profile…</Text>
       </View>
@@ -49,11 +49,11 @@ const styles = StyleSheet.create({
     height: 84,
     borderRadius: 42,
     borderWidth: 3,
-    borderColor: colors.violetDeep,
+    borderColor: colors.ivory,
     borderTopColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 24,
   },
-  title: { fontFamily: typography.heading, fontSize: 16, color: colors.violetDeep },
+  title: { fontFamily: typography.heading, fontSize: 16, color: colors.ivory },
 });
