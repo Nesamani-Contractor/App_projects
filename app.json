@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "Shine Me",
+    "slug": "shine-me",
+    "scheme": "shineme",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#FFE4EC",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.shineme.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Shine Me uses your camera to analyze your face and find your perfect colors and makeup look."
+      }
+    },
+    "android": {
+      "package": "com.shineme.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#FFE4EC",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Shine Me uses your camera to analyze your face and find your perfect colors and makeup look."
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 180,
+          "resizeMode": "contain",
+          "backgroundColor": "#FFE4EC"
+        }
+      ]
+    ]
+  }
+}
