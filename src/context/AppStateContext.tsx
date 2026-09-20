@@ -1,14 +1,17 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LookId } from '../data/looks';
+import { ScanRecord } from '../data/mockHistory';
 
 type AppState = {
   ready: boolean;
   hasOnboarded: boolean;
   isPremium: boolean;
   styleAnswer?: LookId;
+  scanHistory: ScanRecord[];
   completeOnboarding: (styleAnswer?: LookId) => void;
   unlockPremium: () => void;
+  addScanRecord: (record: ScanRecord) => void;
 };
 
 const AppStateContext = createContext<AppState | undefined>(undefined);
@@ -17,6 +20,7 @@ const KEYS = {
   onboarded: 'shineme.hasOnboarded',
   premium: 'shineme.isPremium',
   styleAnswer: 'shineme.styleAnswer',
+  scanHistory: 'shineme.scanHistory',
 };
 
 export const AppStateProvider = ({ children }: { children: React.ReactNode }) => {
@@ -24,18 +28,25 @@ export const AppStateProvider = ({ children }: { children: React.ReactNode }) =>
   const [hasOnboarded, setHasOnboarded] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [styleAnswer, setStyleAnswer] = useState<LookId | undefined>(undefined);
+  const [scanHistory, setScanHistory] = useState<ScanRecord[]>([]);
 
   useEffect(() => {
     (async () => {
       try {
-        const [onboarded, premium, style] = await Promise.all([
+        const [onboarded, premium, style, history] = await Promise.all([
           AsyncStorage.getItem(KEYS.onboarded),
           AsyncStorage.getItem(KEYS.premium),
           AsyncStorage.getItem(KEYS.styleAnswer),
+          AsyncStorage.getItem(KEYS.scanHistory),
         ]);
         setHasOnboarded(onboarded === 'true');
         setIsPremium(premium === 'true');
         if (style) setStyleAnswer(style as LookId);
+        if (history) {
+          try {
+            setScanHistory(JSON.parse(history));
+          } catch {}
+        }
       } finally {
         setReady(true);
       }
@@ -56,9 +67,26 @@ export const AppStateProvider = ({ children }: { children: React.ReactNode }) =>
     AsyncStorage.setItem(KEYS.premium, 'true').catch(() => {});
   };
 
+  const addScanRecord = (record: ScanRecord) => {
+    setScanHistory((prev) => {
+      const next = [record, ...prev];
+      AsyncStorage.setItem(KEYS.scanHistory, JSON.stringify(next)).catch(() => {});
+      return next;
+    });
+  };
+
   const value = useMemo(
-    () => ({ ready, hasOnboarded, isPremium, styleAnswer, completeOnboarding, unlockPremium }),
-    [ready, hasOnboarded, isPremium, styleAnswer]
+    () => ({
+      ready,
+      hasOnboarded,
+      isPremium,
+      styleAnswer,
+      scanHistory,
+      completeOnboarding,
+      unlockPremium,
+      addScanRecord,
+    }),
+    [ready, hasOnboarded, isPremium, styleAnswer, scanHistory]
   );
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;
