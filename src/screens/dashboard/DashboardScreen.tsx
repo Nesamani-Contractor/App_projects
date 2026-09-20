@@ -13,9 +13,10 @@ import { useAppState } from '../../context/AppStateContext';
 type Props = NativeStackScreenProps<DashboardStackParamList, 'Dashboard'>;
 
 export default function DashboardScreen({ navigation }: Props) {
-  const { totalScans, avgScore, favoriteLook } = getHistoryStats();
-  const { isPremium } = useAppState();
-  const sorted = [...MOCK_HISTORY].sort(
+  const { isPremium, scanHistory } = useAppState();
+  const allRecords = [...scanHistory, ...MOCK_HISTORY];
+  const { totalScans, avgScore, favoriteLook } = getHistoryStats(allRecords);
+  const sorted = [...allRecords].sort(
     (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
   );
 

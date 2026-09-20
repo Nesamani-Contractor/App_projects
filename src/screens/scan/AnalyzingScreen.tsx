@@ -16,7 +16,8 @@ const STEPS = [
   { icon: 'heart-outline' as const, label: 'Writing your Shine Me guide…' },
 ];
 
-export default function AnalyzingScreen({ navigation }: Props) {
+export default function AnalyzingScreen({ navigation, route }: Props) {
+  const photoUri = route.params?.photoUri;
   const [stepIndex, setStepIndex] = useState(0);
   const spin = useRef(new Animated.Value(0)).current;
 
@@ -42,6 +43,7 @@ export default function AnalyzingScreen({ navigation }: Props) {
         praiseIndex: seed,
         timestamp: new Date().toISOString(),
         score: 88 + (seed % 10),
+        photoUri,
       });
     }, 3200);
 
@@ -50,7 +52,7 @@ export default function AnalyzingScreen({ navigation }: Props) {
       clearInterval(interval);
       clearTimeout(timeout);
     };
-  }, [navigation, spin]);
+  }, [navigation, spin, photoUri]);
 
   const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
 
