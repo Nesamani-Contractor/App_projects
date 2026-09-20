@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,11 +8,13 @@ import { DashboardStackParamList } from '../../navigation/types';
 import { getHistoryStats, MOCK_HISTORY } from '../../data/mockHistory';
 import { VaultCard } from '../../components/VaultCard';
 import { colors, gradients, radii, spacing, typography } from '../../theme/colors';
+import { useAppState } from '../../context/AppStateContext';
 
 type Props = NativeStackScreenProps<DashboardStackParamList, 'Dashboard'>;
 
 export default function DashboardScreen({ navigation }: Props) {
   const { totalScans, avgScore, favoriteLook } = getHistoryStats();
+  const { isPremium } = useAppState();
   const sorted = [...MOCK_HISTORY].sort(
     (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
   );
@@ -55,6 +57,21 @@ export default function DashboardScreen({ navigation }: Props) {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
+        {!isPremium && (
+          <Pressable
+            onPress={() => (navigation.getParent() as any)?.getParent()?.navigate('Paywall', { source: 'dashboard' })}
+          >
+            <LinearGradient colors={gradients.glamUpPaywall} style={styles.premiumBanner}>
+              <Ionicons name="diamond" size={20} color={colors.goldLight} />
+              <View style={{ flex: 1, marginLeft: spacing.sm }}>
+                <Text style={styles.premiumBannerTitle}>Go Premium</Text>
+                <Text style={styles.premiumBannerSubtitle}>Unlock unlimited scans & every feature</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.ivory} />
+            </LinearGradient>
+          </Pressable>
+        )}
+
         <View style={styles.sectionHeaderRow}>
           <Text style={styles.sectionTitle}>Scan Timeline</Text>
           <View style={styles.sectionBadge}>
@@ -129,6 +146,15 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   scrollContent: { padding: spacing.lg, paddingBottom: spacing.tabBarClearance },
+  premiumBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: radii.lg,
+    padding: spacing.md,
+    marginBottom: spacing.lg,
+  },
+  premiumBannerTitle: { fontFamily: typography.heading, fontSize: 14.5, color: colors.ivory },
+  premiumBannerSubtitle: { fontFamily: typography.body, fontSize: 11, color: 'rgba(255,255,255,0.85)', marginTop: 1 },
   sectionHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',

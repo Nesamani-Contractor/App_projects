@@ -16,6 +16,7 @@ import {
   Poppins_600SemiBold,
 } from '@expo-google-fonts/poppins';
 import RootNavigator from './src/navigation/RootNavigator';
+import { AppStateProvider } from './src/context/AppStateContext';
 import { colors } from './src/theme/colors';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -44,7 +45,9 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayout}>
       <SafeAreaProvider>
         <StatusBar style="dark" />
-        <RootNavigator />
+        <AppStateProvider>
+          <RootNavigator />
+        </AppStateProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

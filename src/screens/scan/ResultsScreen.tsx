@@ -9,26 +9,37 @@ import { colors, gradients, radii, spacing, typography } from '../../theme/color
 import { COLOR_SEASONS, pickSeasonForSeed } from '../../data/colorSeasons';
 import { recommendLookForSeason } from '../../data/looks';
 import { FACIAL_TRAITS, pickPraise, SHINE_GUIDE_STEPS } from '../../data/insights';
+import { pickStyleIcon } from '../../data/styleIcons';
+import { getProductRecs } from '../../data/products';
 import { SectionCard } from '../../components/SectionCard';
 import { GoldBadge } from '../../components/GoldBadge';
 import { GradientButton } from '../../components/GradientButton';
+import { PremiumGate } from '../../components/PremiumGate';
 import { formatDateTime } from '../../utils/formatDate';
+import { useAppState } from '../../context/AppStateContext';
 
 type Props = NativeStackScreenProps<ScanStackParamList, 'Results'>;
 
 export default function ResultsScreen({ route, navigation }: Props) {
   const { seasonId, praiseIndex, timestamp, score } = route.params;
+  const { isPremium } = useAppState();
   const season = useMemo(
     () => COLOR_SEASONS.find((s) => s.id === seasonId) ?? pickSeasonForSeed(0),
     [seasonId]
   );
   const praise = pickPraise(praiseIndex);
+  const styleIcon = pickStyleIcon(praiseIndex);
+  const products = getProductRecs(season.id);
 
   const goChooseLook = () => {
     (navigation.getParent() as any)?.navigate('LooksTab', {
       screen: 'ChooseLook',
       params: { recommendedLookId: recommendLookForSeason(season.id) },
     });
+  };
+
+  const goPaywall = () => {
+    (navigation.getParent() as any)?.getParent()?.navigate('Paywall', { source: 'results' });
   };
 
   return (
@@ -106,6 +117,36 @@ export default function ResultsScreen({ route, navigation }: Props) {
             </View>
           ))}
         </SectionCard>
+
+        <PremiumGate locked={!isPremium} onUnlock={goPaywall}>
+          <SectionCard
+            icon="people-outline"
+            title="Style Icon Match"
+            subtitle="Who your features & coloring resemble"
+          >
+            <Text style={styles.styleIconName}>{styleIcon.name}</Text>
+            <Text style={styles.seasonSubtitle}>{styleIcon.era}</Text>
+            <Text style={styles.bodyText}>{styleIcon.description}</Text>
+          </SectionCard>
+        </PremiumGate>
+
+        <PremiumGate locked={!isPremium} onUnlock={goPaywall}>
+          <SectionCard
+            icon="pricetag-outline"
+            title="Product Recommendations"
+            subtitle="Shades picked for your color season"
+          >
+            {products.map((p) => (
+              <View key={p.id} style={styles.productRow}>
+                <Ionicons name={p.icon} size={16} color={colors.goldDeep} />
+                <View style={{ flex: 1, marginLeft: spacing.sm }}>
+                  <Text style={styles.guideTitle}>{p.category} · {p.shadeName}</Text>
+                  <Text style={styles.guideDetail}>{p.note}</Text>
+                </View>
+              </View>
+            ))}
+          </SectionCard>
+        </PremiumGate>
 
         <GradientButton
           label="Choose My Shining Look"
@@ -205,4 +246,12 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
   },
   traitValueText: { fontFamily: typography.bodySemiBold, fontSize: 11.5, color: colors.berry },
+  styleIconName: { fontFamily: typography.display, fontSize: 18, color: colors.plum },
+  productRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    paddingVertical: spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(217,169,78,0.15)',
+  },
 });

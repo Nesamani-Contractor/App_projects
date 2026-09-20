@@ -9,10 +9,12 @@ export const LookCard = ({
   look,
   onPress,
   recommended,
+  locked,
 }: {
   look: LookOption;
   onPress: () => void;
   recommended?: boolean;
+  locked?: boolean;
 }) => {
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [styles.wrap, pressed && { opacity: 0.9 }]}>
@@ -22,17 +24,24 @@ export const LookCard = ({
         end={{ x: 0.9, y: 1 }}
         style={styles.card}
       >
-        {recommended && (
+        {recommended && !locked && (
           <View style={styles.recBadge}>
             <Ionicons name="star" size={10} color={colors.plum} />
             <Text style={styles.recText}>For You</Text>
           </View>
         )}
+        {locked && (
+          <View style={styles.lockBadge}>
+            <Ionicons name="lock-closed" size={11} color={colors.plum} />
+            <Text style={styles.recText}>Premium</Text>
+          </View>
+        )}
         <View style={styles.iconCircle}>
-          <Ionicons name={look.icon} size={22} color={colors.ivory} />
+          <Ionicons name={locked ? 'lock-closed' : look.icon} size={22} color={colors.ivory} />
         </View>
         <Text style={styles.title}>{look.title}</Text>
         <Text style={styles.tagline}>{look.tagline}</Text>
+        {locked && <View style={styles.lockOverlay} />}
       </LinearGradient>
     </Pressable>
   );
@@ -87,5 +96,25 @@ const styles = StyleSheet.create({
     fontSize: 9.5,
     color: colors.plum,
     marginLeft: 3,
+  },
+  lockBadge: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.85)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: radii.pill,
+  },
+  lockOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(58,36,48,0.18)',
+    borderRadius: radii.lg,
   },
 });

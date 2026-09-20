@@ -12,6 +12,11 @@ export const colors = {
   goldLight: '#F1D28A',
   goldDeep: '#B8862F',
 
+  // Glam Up-style lavender accent (onboarding / paywall)
+  lavender: '#C9AEE8',
+  lavenderDeep: '#8E5FC7',
+  violetDeep: '#4A2E7A',
+
   // Neutrals
   ivory: '#FFFBF6',
   cream: '#FFF3E9',
@@ -41,6 +46,8 @@ export const gradients = {
   fullGlam: ['#3A2440', '#7A2E52', '#C24A72'] as const,
   sweetSpicy: ['#FFCB77', '#FF8FA3', '#C4467A'] as const,
   chooseForMe: ['#F7A8C4', '#D9A94E', '#F7A8C4'] as const,
+  glamUpOnboarding: ['#FBD9EC', '#E5C6F0', '#C9AEE8'] as const,
+  glamUpPaywall: ['#4A2E7A', '#7A3E9E', '#C9548F'] as const,
 };
 
 export const typography = {
