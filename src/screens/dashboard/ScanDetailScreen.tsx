@@ -9,7 +9,7 @@ import { MOCK_HISTORY } from '../../data/mockHistory';
 import { COLOR_SEASONS } from '../../data/colorSeasons';
 import { getLookById } from '../../data/looks';
 import { FACIAL_TRAITS, SHINE_GUIDE_STEPS } from '../../data/insights';
-import { GeneratedPortrait } from '../../components/GeneratedPortrait';
+import { GeneratedPortrait, getPortraitVariantCount } from '../../components/GeneratedPortrait';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { SectionCard } from '../../components/SectionCard';
 import { GoldBadge } from '../../components/GoldBadge';
@@ -24,6 +24,7 @@ export default function ScanDetailScreen({ route, navigation }: Props) {
 
   const season = COLOR_SEASONS.find((s) => s.id === record.seasonId)!;
   const look = getLookById(record.lookId)!;
+  const portraitVariant = record.id.length % getPortraitVariantCount(look.id);
 
   return (
     <View style={styles.fill}>
@@ -42,7 +43,7 @@ export default function ScanDetailScreen({ route, navigation }: Props) {
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.lookPreview}>
           <LinearGradient colors={look.gradient as any} style={styles.lookHero}>
-            <GeneratedPortrait lookId={look.id} size={150} />
+            <GeneratedPortrait lookId={look.id} variant={portraitVariant} size={150} />
           </LinearGradient>
           <View style={styles.lookMeta}>
             <GoldBadge icon="sparkles-outline" label={`${record.score} Shine Score`} />

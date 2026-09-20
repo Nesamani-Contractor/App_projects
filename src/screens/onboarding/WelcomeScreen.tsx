@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { OnboardingStackParamList } from '../../navigation/types';
 import { GradientButton } from '../../components/GradientButton';
+import { PortraitShowcase } from '../../components/PortraitShowcase';
 import { colors, gradients, spacing, typography } from '../../theme/colors';
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, 'Welcome'>;
@@ -14,9 +15,8 @@ export default function WelcomeScreen({ navigation }: Props) {
   return (
     <LinearGradient colors={gradients.glamUpOnboarding} style={styles.fill}>
       <SafeAreaView style={styles.content}>
-        <View style={styles.badge}>
-          <Ionicons name="sparkles" size={30} color={colors.violetDeep} />
-        </View>
+        <PortraitShowcase count={4} size={64} />
+        <Text style={styles.joinCaption}>Join thousands shining today</Text>
         <Text style={styles.title}>Shine Me</Text>
         <Text style={styles.tagline}>Your personal AI beauty consultant for the ultimate glow up</Text>
 
@@ -48,15 +48,14 @@ export default function WelcomeScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   fill: { flex: 1 },
   content: { flex: 1, justifyContent: 'center', paddingHorizontal: spacing.lg },
-  badge: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: 'rgba(255,255,255,0.6)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    marginBottom: spacing.md,
+  joinCaption: {
+    fontFamily: typography.bodySemiBold,
+    fontSize: 12,
+    letterSpacing: 1,
+    color: 'rgba(255,255,255,0.85)',
+    textAlign: 'center',
+    marginTop: spacing.sm,
+    marginBottom: spacing.xs,
   },
   title: {
     fontFamily: typography.display,

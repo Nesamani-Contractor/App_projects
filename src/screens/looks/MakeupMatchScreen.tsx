@@ -8,7 +8,7 @@ import { LooksStackParamList } from '../../navigation/types';
 import { LOOKS, LookId } from '../../data/looks';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { GradientButton } from '../../components/GradientButton';
-import { GeneratedPortrait } from '../../components/GeneratedPortrait';
+import { GeneratedPortrait, getPortraitVariantCount } from '../../components/GeneratedPortrait';
 import { colors, radii, spacing, typography } from '../../theme/colors';
 
 type Props = NativeStackScreenProps<LooksStackParamList, 'MakeupMatch'>;
@@ -19,6 +19,7 @@ export default function MakeupMatchScreen({ navigation }: Props) {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [matching, setMatching] = useState(false);
   const [matchedId, setMatchedId] = useState<LookId | null>(null);
+  const [matchedVariant, setMatchedVariant] = useState(0);
 
   const runMatch = async (pickerResult: ImagePicker.ImagePickerResult) => {
     if (pickerResult.canceled) return;
@@ -29,7 +30,9 @@ export default function MakeupMatchScreen({ navigation }: Props) {
     setMatching(true);
     setTimeout(() => {
       const seed = uri.length + Math.floor(Math.random() * 7);
-      setMatchedId(shuffleable[seed % shuffleable.length].id);
+      const look = shuffleable[seed % shuffleable.length];
+      setMatchedId(look.id);
+      setMatchedVariant(Math.floor(Math.random() * getPortraitVariantCount(look.id)));
       setMatching(false);
     }, 1400);
   };
@@ -94,7 +97,7 @@ export default function MakeupMatchScreen({ navigation }: Props) {
           <View style={styles.resultBox}>
             <Text style={styles.resultLabel}>Closest Match</Text>
             <View style={styles.resultCard}>
-              <GeneratedPortrait lookId={matchedLook.id} size={110} />
+              <GeneratedPortrait lookId={matchedLook.id} variant={matchedVariant} size={110} />
               <Text style={styles.resultTitle}>{matchedLook.title}</Text>
               <Text style={styles.resultTagline}>{matchedLook.tagline}</Text>
             </View>

@@ -19,96 +19,186 @@ type PortraitConfig = {
   eyeliner: string;
   blush: string;
   accent: string;
+  eyeshadow?: string;
   hairStyle: 'long' | 'sleek' | 'wavy' | 'curly' | 'bun' | 'undone';
   accessory: 'flower' | 'glow' | 'stud' | 'hoops' | 'tiara' | 'confetti' | 'sparkleRing';
 };
 
-const CONFIGS: Record<LookId, PortraitConfig> = {
-  'soft-girl': {
-    skin: '#FBD9C4',
-    skinShadow: '#F0C0A6',
-    hairFrom: '#F6D8C8',
-    hairTo: '#D9A57E',
-    lip: '#F0A3B8',
-    eyeliner: '#7A5A52',
-    blush: '#F7A8C4',
-    accent: '#F7A8C4',
-    hairStyle: 'wavy',
-    accessory: 'flower',
-  },
-  'natural-glam': {
-    skin: '#F0BE95',
-    skinShadow: '#DFA278',
-    hairFrom: '#8C5A32',
-    hairTo: '#4A2F1C',
-    lip: '#C9744F',
-    eyeliner: '#4A2F1C',
-    blush: '#E8956B',
-    accent: '#D9A94E',
-    hairStyle: 'sleek',
-    accessory: 'glow',
-  },
-  'soft-grunge': {
-    skin: '#EAC7B4',
-    skinShadow: '#D6AE99',
-    hairFrom: '#5A4A63',
-    hairTo: '#2E2038',
-    lip: '#6E2340',
-    eyeliner: '#1E1B2E',
-    blush: '#B4718C',
-    accent: '#6E4C7A',
-    hairStyle: 'undone',
-    accessory: 'stud',
-  },
-  'latina-bestie': {
-    skin: '#C9895B',
-    skinShadow: '#B06E42',
-    hairFrom: '#3A2115',
-    hairTo: '#1A0F0A',
-    lip: '#B8324B',
-    eyeliner: '#2A1710',
-    blush: '#E8703F',
-    accent: '#D9A94E',
-    hairStyle: 'curly',
-    accessory: 'hoops',
-  },
-  'full-glam': {
-    skin: '#F2CBA6',
-    skinShadow: '#E0AE85',
-    hairFrom: '#241522',
-    hairTo: '#120A14',
-    lip: '#8C1F3B',
-    eyeliner: '#120A14',
-    blush: '#C24A72',
-    accent: '#D9A94E',
-    hairStyle: 'long',
-    accessory: 'tiara',
-  },
-  'sweet-spicy': {
-    skin: '#F5CDA8',
-    skinShadow: '#E4B18A',
-    hairFrom: '#C9724A',
-    hairTo: '#7A3B2E',
-    lip: '#E8557A',
-    eyeliner: '#5A2340',
-    blush: '#FF8FA3',
-    accent: '#FFCB77',
-    hairStyle: 'bun',
-    accessory: 'confetti',
-  },
-  'choose-for-me': {
-    skin: '#F2CBA6',
-    skinShadow: '#E0AE85',
-    hairFrom: '#7A3B5A',
-    hairTo: '#3A2340',
-    lip: '#D9748F',
-    eyeliner: '#5A2340',
-    blush: '#F7A8C4',
-    accent: '#D9A94E',
-    hairStyle: 'wavy',
-    accessory: 'sparkleRing',
-  },
+const CONFIGS: Record<LookId, PortraitConfig[]> = {
+  'soft-girl': [
+    {
+      skin: '#FBD9C4',
+      skinShadow: '#F0C0A6',
+      hairFrom: '#F6D8C8',
+      hairTo: '#D9A57E',
+      lip: '#F0A3B8',
+      eyeliner: '#7A5A52',
+      blush: '#F7A8C4',
+      accent: '#F7A8C4',
+      hairStyle: 'wavy',
+      accessory: 'flower',
+    },
+    {
+      skin: '#E8B48F',
+      skinShadow: '#D69B72',
+      hairFrom: '#6B4226',
+      hairTo: '#3D2314',
+      lip: '#E88FA6',
+      eyeliner: '#4A2F1C',
+      blush: '#F0A3B8',
+      accent: '#F7A8C4',
+      hairStyle: 'wavy',
+      accessory: 'flower',
+    },
+  ],
+  'natural-glam': [
+    {
+      skin: '#F0BE95',
+      skinShadow: '#DFA278',
+      hairFrom: '#8C5A32',
+      hairTo: '#4A2F1C',
+      lip: '#C9744F',
+      eyeliner: '#4A2F1C',
+      blush: '#E8956B',
+      accent: '#D9A94E',
+      hairStyle: 'sleek',
+      accessory: 'glow',
+    },
+    {
+      skin: '#D9A574',
+      skinShadow: '#C08A5C',
+      hairFrom: '#2B1810',
+      hairTo: '#150C08',
+      lip: '#C97050',
+      eyeliner: '#150C08',
+      blush: '#D97F5A',
+      accent: '#D9A94E',
+      hairStyle: 'sleek',
+      accessory: 'glow',
+    },
+  ],
+  'soft-grunge': [
+    {
+      skin: '#EAC7B4',
+      skinShadow: '#D6AE99',
+      hairFrom: '#5A4A63',
+      hairTo: '#2E2038',
+      lip: '#6E2340',
+      eyeliner: '#1E1B2E',
+      blush: '#B4718C',
+      accent: '#6E4C7A',
+      hairStyle: 'undone',
+      accessory: 'stud',
+    },
+    {
+      skin: '#C68A63',
+      skinShadow: '#AD7350',
+      hairFrom: '#3A3A3A',
+      hairTo: '#1A1A1A',
+      lip: '#7A2E4C',
+      eyeliner: '#1A1A1A',
+      blush: '#B4718C',
+      accent: '#6E4C7A',
+      hairStyle: 'undone',
+      accessory: 'stud',
+    },
+  ],
+  'latina-bestie': [
+    {
+      skin: '#C9895B',
+      skinShadow: '#B06E42',
+      hairFrom: '#3A2115',
+      hairTo: '#1A0F0A',
+      lip: '#B8324B',
+      eyeliner: '#2A1710',
+      blush: '#E8703F',
+      accent: '#D9A94E',
+      hairStyle: 'curly',
+      accessory: 'hoops',
+    },
+    {
+      skin: '#A8653A',
+      skinShadow: '#8F5230',
+      hairFrom: '#1A0F0A',
+      hairTo: '#0A0605',
+      lip: '#C43A5C',
+      eyeliner: '#0A0605',
+      blush: '#E0602F',
+      accent: '#D9A94E',
+      hairStyle: 'curly',
+      accessory: 'hoops',
+    },
+  ],
+  'full-glam': [
+    {
+      skin: '#F2CBA6',
+      skinShadow: '#E0AE85',
+      hairFrom: '#241522',
+      hairTo: '#120A14',
+      lip: '#8C1F3B',
+      eyeliner: '#120A14',
+      blush: '#C24A72',
+      accent: '#D9A94E',
+      hairStyle: 'long',
+      accessory: 'tiara',
+    },
+    {
+      skin: '#8C5A3A',
+      skinShadow: '#734730',
+      hairFrom: '#120A14',
+      hairTo: '#0A0508',
+      lip: '#9C1F45',
+      eyeliner: '#0A0508',
+      blush: '#B8365E',
+      accent: '#D9A94E',
+      hairStyle: 'long',
+      accessory: 'tiara',
+    },
+  ],
+  'sweet-spicy': [
+    {
+      skin: '#F5CDA8',
+      skinShadow: '#E4B18A',
+      hairFrom: '#C9724A',
+      hairTo: '#7A3B2E',
+      lip: '#E8557A',
+      eyeliner: '#5A2340',
+      blush: '#FF8FA3',
+      accent: '#FFCB77',
+      hairStyle: 'bun',
+      accessory: 'confetti',
+    },
+    {
+      skin: '#F0D4B8',
+      skinShadow: '#DFBB98',
+      hairFrom: '#1A1512',
+      hairTo: '#0D0A08',
+      lip: '#E8478A',
+      eyeliner: '#3A2A3E',
+      blush: '#FF8FC2',
+      accent: '#7FC4E8',
+      eyeshadow: '#8FD3EC',
+      hairStyle: 'bun',
+      accessory: 'confetti',
+    },
+  ],
+  'choose-for-me': [
+    {
+      skin: '#F2CBA6',
+      skinShadow: '#E0AE85',
+      hairFrom: '#7A3B5A',
+      hairTo: '#3A2340',
+      lip: '#D9748F',
+      eyeliner: '#5A2340',
+      blush: '#F7A8C4',
+      accent: '#D9A94E',
+      hairStyle: 'wavy',
+      accessory: 'sparkleRing',
+    },
+  ],
 };
+
+export const getPortraitVariantCount = (lookId: LookId) => CONFIGS[lookId].length;
 
 const HAIR_BACK_PATHS: Record<PortraitConfig['hairStyle'], string> = {
   long: 'M60 120 C40 220 55 320 85 360 L100 340 C88 280 88 200 100 130 Z M240 120 C260 220 245 320 215 360 L200 340 C212 280 212 200 200 130 Z',
@@ -128,7 +218,7 @@ const HAIR_FRONT_PATHS: Record<PortraitConfig['hairStyle'], string> = {
   undone: 'M150 38 C90 32 52 78 54 130 C56 150 70 164 88 172 C84 134 100 104 122 92 C130 116 170 116 178 92 C200 104 216 134 212 172 C230 164 244 150 246 130 C248 78 210 44 150 38 Z',
 };
 
-const AccessoryLayer = ({ config, seed }: { config: PortraitConfig; seed: number }) => {
+const AccessoryLayer = ({ config }: { config: PortraitConfig }) => {
   switch (config.accessory) {
     case 'flower':
       return (
@@ -190,11 +280,14 @@ const AccessoryLayer = ({ config, seed }: { config: PortraitConfig; seed: number
 export const GeneratedPortrait = ({
   lookId,
   size = 220,
+  variant = 0,
 }: {
   lookId: LookId;
   size?: number;
+  variant?: number;
 }) => {
-  const config = CONFIGS[lookId];
+  const variants = CONFIGS[lookId];
+  const config = variants[variant % variants.length];
   const hairBack = HAIR_BACK_PATHS[config.hairStyle];
   const hairFront = HAIR_FRONT_PATHS[config.hairStyle];
 
@@ -211,7 +304,7 @@ export const GeneratedPortrait = ({
         </RadialGradient>
       </Defs>
 
-      <AccessoryLayer config={config} seed={0} />
+      <AccessoryLayer config={config} />
 
       {/* hair back */}
       <Path d={hairBack} fill="url(#hairGrad)" />
@@ -229,6 +322,14 @@ export const GeneratedPortrait = ({
       {/* blush */}
       <Ellipse cx={110} cy={172} rx={16} ry={10} fill={config.blush} opacity={0.55} />
       <Ellipse cx={190} cy={172} rx={16} ry={10} fill={config.blush} opacity={0.55} />
+
+      {/* eyeshadow accent */}
+      {config.eyeshadow && (
+        <>
+          <Ellipse cx={118} cy={140} rx={17} ry={10} fill={config.eyeshadow} opacity={0.6} />
+          <Ellipse cx={182} cy={140} rx={17} ry={10} fill={config.eyeshadow} opacity={0.6} />
+        </>
+      )}
 
       {/* brows */}
       <Path d="M100 128 Q116 118 134 126" stroke={config.eyeliner} strokeWidth={4} fill="none" strokeLinecap="round" />
