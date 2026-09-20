@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import {
   Dimensions,
+  Modal,
   Pressable,
   StyleSheet,
   Text,
@@ -24,10 +25,10 @@ type Props = NativeStackScreenProps<ScanStackParamList, 'ScanCamera'>;
 export default function ScanCameraScreen({ navigation }: Props) {
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<'front' | 'back'>('front');
-  const [showTips, setShowTips] = useState(true);
+  const [guidelinesVisible, setGuidelinesVisible] = useState(false);
   const [scanning, setScanning] = useState(false);
 
-  const handleCapture = useCallback(() => {
+  const startScan = useCallback(() => {
     if (scanning) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setScanning(true);
@@ -36,6 +37,16 @@ export default function ScanCameraScreen({ navigation }: Props) {
       navigation.navigate('Analyzing');
     }, 1400);
   }, [navigation, scanning]);
+
+  const handleCapturePress = useCallback(() => {
+    if (scanning) return;
+    setGuidelinesVisible(true);
+  }, [scanning]);
+
+  const handleConfirmGuidelines = useCallback(() => {
+    setGuidelinesVisible(false);
+    startScan();
+  }, [startScan]);
 
   const cameraReady = permission?.granted;
 
@@ -83,18 +94,10 @@ export default function ScanCameraScreen({ navigation }: Props) {
         </View>
 
         <View style={styles.bottomArea}>
-          {showTips && <DoDontCard onClose={() => setShowTips(false)} />}
-          {!showTips && (
-            <Pressable style={styles.tipsChip} onPress={() => setShowTips(true)}>
-              <Ionicons name="information-circle-outline" size={14} color={colors.ivory} />
-              <Text style={styles.tipsChipText}>Do's & Don'ts</Text>
-            </Pressable>
-          )}
-
           <View style={styles.captureRow}>
             <View style={styles.captureSpacer} />
             <Pressable
-              onPress={handleCapture}
+              onPress={handleCapturePress}
               disabled={!cameraReady || scanning}
               style={({ pressed }) => [
                 styles.captureOuter,
@@ -115,6 +118,20 @@ export default function ScanCameraScreen({ navigation }: Props) {
           </Text>
         </View>
       </SafeAreaView>
+
+      <Modal
+        visible={guidelinesVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setGuidelinesVisible(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <DoDontCard
+            onClose={() => setGuidelinesVisible(false)}
+            onConfirm={handleConfirmGuidelines}
+          />
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -155,21 +172,12 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.85)',
   },
   bottomArea: { paddingHorizontal: 20, paddingBottom: 100 },
-  tipsChip: {
-    flexDirection: 'row',
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.55)',
     alignItems: 'center',
-    alignSelf: 'center',
-    backgroundColor: 'rgba(255,255,255,0.18)',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 999,
-    marginBottom: 10,
-  },
-  tipsChipText: {
-    fontFamily: typography.bodyMedium,
-    fontSize: 12,
-    color: colors.ivory,
-    marginLeft: 6,
+    justifyContent: 'center',
+    paddingHorizontal: 24,
   },
   captureRow: {
     flexDirection: 'row',
