@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,11 +15,13 @@ import { SectionCard } from '../../components/SectionCard';
 import { GoldBadge } from '../../components/GoldBadge';
 import { colors, gradients, radii, spacing, typography } from '../../theme/colors';
 import { formatDateTime } from '../../utils/formatDate';
+import { useAppState } from '../../context/AppStateContext';
 
 type Props = NativeStackScreenProps<DashboardStackParamList, 'ScanDetail'>;
 
 export default function ScanDetailScreen({ route, navigation }: Props) {
-  const record = MOCK_HISTORY.find((r) => r.id === route.params.recordId);
+  const { scanHistory } = useAppState();
+  const record = [...scanHistory, ...MOCK_HISTORY].find((r) => r.id === route.params.recordId);
   if (!record) return null;
 
   const season = COLOR_SEASONS.find((s) => s.id === record.seasonId)!;
@@ -43,7 +45,11 @@ export default function ScanDetailScreen({ route, navigation }: Props) {
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.lookPreview}>
           <LinearGradient colors={look.gradient as any} style={styles.lookHero}>
-            <GeneratedPortrait lookId={look.id} variant={portraitVariant} size={150} />
+            {record.photoUri ? (
+              <Image source={{ uri: record.photoUri }} style={styles.lookPhoto} />
+            ) : (
+              <GeneratedPortrait lookId={look.id} variant={portraitVariant} size={150} />
+            )}
           </LinearGradient>
           <View style={styles.lookMeta}>
             <GoldBadge icon="sparkles-outline" label={`${record.score} Shine Score`} />
@@ -109,6 +115,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginRight: spacing.md,
   },
+  lookPhoto: { width: '100%', height: '100%' },
   lookMeta: { flex: 1 },
   lookTitle: { fontFamily: typography.display, fontSize: 19, color: colors.plum, marginTop: 6 },
   lookTagline: { fontFamily: typography.body, fontSize: 12.5, color: colors.slate, marginTop: 2 },

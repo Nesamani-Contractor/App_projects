@@ -9,6 +9,7 @@ export type ScanRecord = {
   lookId: LookId;
   praise: string;
   score: number; // "shine score" out of 100
+  photoUri?: string;
 };
 
 const daysAgo = (n: number, hour = 9) => {
@@ -69,18 +70,18 @@ export const MOCK_HISTORY: ScanRecord[] = [
   },
 ];
 
-export const getHistoryStats = () => {
-  const totalScans = MOCK_HISTORY.length;
+export const getHistoryStats = (records: ScanRecord[] = MOCK_HISTORY) => {
+  const totalScans = records.length;
   const avgScore = Math.round(
-    MOCK_HISTORY.reduce((sum, r) => sum + r.score, 0) / (totalScans || 1)
+    records.reduce((sum, r) => sum + r.score, 0) / (totalScans || 1)
   );
   const favoriteLook = LOOKS.find(
     (l) =>
       l.id ===
-      MOCK_HISTORY.map((r) => r.lookId).sort(
+      records.map((r) => r.lookId).sort(
         (a, b) =>
-          MOCK_HISTORY.filter((r) => r.lookId === b).length -
-          MOCK_HISTORY.filter((r) => r.lookId === a).length
+          records.filter((r) => r.lookId === b).length -
+          records.filter((r) => r.lookId === a).length
       )[0]
   );
   return { totalScans, avgScore, favoriteLook };

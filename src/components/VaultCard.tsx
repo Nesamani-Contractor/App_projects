@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { ScanRecord } from '../data/mockHistory';
@@ -20,14 +20,18 @@ export const VaultCard = ({
 
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [styles.wrap, pressed && { opacity: 0.92 }]}>
-      <LinearGradient
-        colors={(look?.gradient ?? gradients.heroBackground) as any}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.thumb}
-      >
-        <Ionicons name={look?.icon ?? 'sparkles-outline'} size={20} color={colors.ivory} />
-      </LinearGradient>
+      {record.photoUri ? (
+        <Image source={{ uri: record.photoUri }} style={styles.thumb} />
+      ) : (
+        <LinearGradient
+          colors={(look?.gradient ?? gradients.heroBackground) as any}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.thumb}
+        >
+          <Ionicons name={look?.icon ?? 'sparkles-outline'} size={20} color={colors.ivory} />
+        </LinearGradient>
+      )}
 
       <View style={styles.middle}>
         <Text style={styles.title}>{season?.name ?? 'Color Season'}</Text>

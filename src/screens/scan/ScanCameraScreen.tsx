@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   Dimensions,
   Modal,
@@ -27,14 +27,24 @@ export default function ScanCameraScreen({ navigation }: Props) {
   const [facing, setFacing] = useState<'front' | 'back'>('front');
   const [guidelinesVisible, setGuidelinesVisible] = useState(false);
   const [scanning, setScanning] = useState(false);
+  const cameraRef = useRef<CameraView>(null);
 
-  const startScan = useCallback(() => {
+  const startScan = useCallback(async () => {
     if (scanning) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setScanning(true);
+
+    let photoUri: string | undefined;
+    try {
+      const photo = await cameraRef.current?.takePictureAsync({ quality: 0.5 });
+      photoUri = photo?.uri;
+    } catch {
+      photoUri = undefined;
+    }
+
     setTimeout(() => {
       setScanning(false);
-      navigation.navigate('Analyzing');
+      navigation.navigate('Analyzing', { photoUri });
     }, 1400);
   }, [navigation, scanning]);
 
@@ -53,7 +63,7 @@ export default function ScanCameraScreen({ navigation }: Props) {
   return (
     <View style={styles.fill}>
       {cameraReady ? (
-        <CameraView style={StyleSheet.absoluteFill} facing={facing} />
+        <CameraView ref={cameraRef} style={StyleSheet.absoluteFill} facing={facing} />
       ) : (
         <LinearGradient
           colors={['#2E1B29', '#4A2740', '#2E1B29']}
