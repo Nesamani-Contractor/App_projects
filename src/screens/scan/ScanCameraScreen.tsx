@@ -17,6 +17,9 @@ import * as Haptics from 'expo-haptics';
 import { ScanStackParamList } from '../../navigation/types';
 import { CircularViewfinder } from '../../components/CircularViewfinder';
 import { DoDontCard } from '../../components/DoDontCard';
+import { RotatingText } from '../../components/RotatingText';
+import { AnimatedFacesBackdrop } from '../../components/AnimatedFacesBackdrop';
+import { SCAN_CHIP_PHRASES, SCAN_HINT_PHRASES, SCAN_FEATURE_PHRASES } from '../../data/scanTaglines';
 import { colors, gradients, typography } from '../../theme/colors';
 
 const { width } = Dimensions.get('window');
@@ -34,15 +37,25 @@ export default function ScanCameraScreen({ navigation }: Props) {
     if (scanning) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setScanning(true);
+    let photoUri: string | undefined;
     try {
       const photo = await cameraRef.current?.takePictureAsync({ quality: 0.6 });
-      if (!photo) throw new Error('No photo captured');
-      navigation.navigate('Analyzing', { photoUri: photo.uri });
+      photoUri = photo?.uri;
     } catch {
-      Alert.alert('Scan failed', 'We couldn’t capture a photo. Please try again.');
-    } finally {
-      setScanning(false);
+      photoUri = undefined;
     }
+
+    if (!photoUri) {
+      setScanning(false);
+      Alert.alert('Scan failed', 'We couldn’t capture a photo. Please try again.');
+      return;
+    }
+
+    const capturedUri = photoUri;
+    setTimeout(() => {
+      setScanning(false);
+      navigation.navigate('Analyzing', { photoUri: capturedUri });
+    }, 1400);
   }, [navigation, scanning]);
 
   const handleCapturePress = useCallback(() => {
@@ -68,16 +81,20 @@ export default function ScanCameraScreen({ navigation }: Props) {
         />
       )}
 
+      {!cameraReady && <AnimatedFacesBackdrop />}
+
       {!cameraReady && (
         <View style={styles.permissionOverlay}>
           <Ionicons name="camera-outline" size={40} color={colors.goldLight} />
           <Text style={styles.permissionTitle}>Camera access needed</Text>
           <Text style={styles.permissionBody}>
-            Shine Me needs your camera to analyze your beautiful face and find your colors.
+            Shine Me's AI Face Reader needs your camera to analyze your face and deliver your
+            color analysis, facial analysis, and makeup recommendations.
           </Text>
           <Pressable style={styles.permissionBtn} onPress={requestPermission}>
             <Text style={styles.permissionBtnText}>Enable Camera</Text>
           </Pressable>
+          <RotatingText phrases={SCAN_FEATURE_PHRASES} style={styles.featureTicker} interval={2800} />
         </View>
       )}
 
@@ -85,7 +102,13 @@ export default function ScanCameraScreen({ navigation }: Props) {
 
       <SafeAreaView style={styles.overlayContent} pointerEvents="box-none">
         <View style={styles.topBar}>
-          <Text style={styles.brand}>Shine Me</Text>
+          <View>
+            <Text style={styles.brand}>Shine Me</Text>
+            <View style={styles.chipRow}>
+              <Ionicons name="sparkles" size={11} color={colors.gold} />
+              <RotatingText phrases={SCAN_CHIP_PHRASES} style={styles.chipText} interval={2400} />
+            </View>
+          </View>
           <Pressable
             style={styles.flipBtn}
             onPress={() => setFacing((f) => (f === 'front' ? 'back' : 'front'))}
@@ -95,9 +118,11 @@ export default function ScanCameraScreen({ navigation }: Props) {
         </View>
 
         <View style={styles.centerHint} pointerEvents="none">
-          <Text style={styles.hintText}>
-            {scanning ? 'Analyzing your beautiful face…' : 'Center your face in the frame'}
-          </Text>
+          {scanning ? (
+            <Text style={styles.hintText}>Analyzing your beautiful face…</Text>
+          ) : (
+            <RotatingText phrases={SCAN_HINT_PHRASES} style={styles.hintText} interval={2600} />
+          )}
         </View>
 
         <View style={styles.bottomArea}>
@@ -172,11 +197,34 @@ const styles = StyleSheet.create({
     width,
     alignItems: 'center',
     marginTop: width * 0.36 + 12,
+    paddingHorizontal: 32,
   },
   hintText: {
     fontFamily: typography.bodyMedium,
     fontSize: 13,
     color: 'rgba(255,255,255,0.85)',
+    textAlign: 'center',
+  },
+  chipRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  chipText: {
+    fontFamily: typography.bodySemiBold,
+    fontSize: 11,
+    color: colors.gold,
+    marginLeft: 4,
+    letterSpacing: 0.3,
+  },
+  featureTicker: {
+    fontFamily: typography.bodyMedium,
+    fontSize: 12.5,
+    color: 'rgba(255,255,255,0.9)',
+    textAlign: 'center',
+    marginTop: 22,
+    paddingHorizontal: 24,
+    lineHeight: 18,
   },
   bottomArea: { paddingHorizontal: 20, paddingBottom: 100 },
   modalBackdrop: {

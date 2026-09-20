@@ -10,6 +10,7 @@ export type ScanStackParamList = {
     timestamp: string;
     score: number;
     faceAnalysis: FaceAnalysisResult;
+    photoUri?: string;
   };
 };
 

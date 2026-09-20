@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,6 +11,7 @@ import { recommendLookForSeason } from '../../data/looks';
 import { FACIAL_TRAITS, pickPraise, SHINE_GUIDE_STEPS } from '../../data/insights';
 import { getProductRecs } from '../../data/products';
 import { SkinConcernSeverity } from '../../types/faceAnalysis';
+import { GeneratedPortrait } from '../../components/GeneratedPortrait';
 import { SectionCard } from '../../components/SectionCard';
 import { GoldBadge } from '../../components/GoldBadge';
 import { GradientButton } from '../../components/GradientButton';
@@ -27,8 +28,8 @@ const severityColor = (severity: SkinConcernSeverity) => {
 };
 
 export default function ResultsScreen({ route, navigation }: Props) {
-  const { seasonId, praiseIndex, timestamp, score, faceAnalysis } = route.params;
-  const { isPremium } = useAppState();
+  const { seasonId, praiseIndex, timestamp, score, faceAnalysis, photoUri } = route.params;
+  const { isPremium, addScanRecord } = useAppState();
   const season = useMemo(
     () => COLOR_SEASONS.find((s) => s.id === seasonId) ?? pickSeasonForSeed(0),
     [seasonId]
@@ -36,6 +37,20 @@ export default function ResultsScreen({ route, navigation }: Props) {
   const praise = pickPraise(praiseIndex);
   const products = getProductRecs(season.id);
   const topCelebrityMatch = faceAnalysis.celebrityMatches[0];
+  const lookId = recommendLookForSeason(season.id);
+
+  useEffect(() => {
+    addScanRecord({
+      id: `scan-${Date.now()}`,
+      timestamp,
+      seasonId: season.id,
+      lookId,
+      praise,
+      score,
+      photoUri,
+    });
+    // Save this scan into the Shine Vault exactly once, when results first land.
+  }, []);
 
   const goChooseLook = () => {
     (navigation.getParent() as any)?.navigate('LooksTab', {
@@ -53,10 +68,19 @@ export default function ResultsScreen({ route, navigation }: Props) {
       <LinearGradient colors={gradients.vaultHeader} style={styles.header}>
         <SafeAreaView edges={['top']}>
           <View style={styles.headerTop}>
-            <GoldBadge icon="time-outline" label={formatDateTime(timestamp)} tone="onPink" />
-            <View style={styles.scoreChip}>
-              <Ionicons name="sparkles" size={12} color={colors.plum} />
-              <Text style={styles.scoreChipText}>{score} Shine Score</Text>
+            <View style={styles.selfieRing}>
+              {photoUri ? (
+                <Image source={{ uri: photoUri }} style={styles.selfieImage} />
+              ) : (
+                <GeneratedPortrait lookId={lookId} size={44} />
+              )}
+            </View>
+            <View style={styles.headerBadges}>
+              <GoldBadge icon="time-outline" label={formatDateTime(timestamp)} tone="onPink" />
+              <View style={styles.scoreChip}>
+                <Ionicons name="sparkles" size={12} color={colors.plum} />
+                <Text style={styles.scoreChipText}>{score} Shine Score</Text>
+              </View>
             </View>
           </View>
           <Text style={styles.headerEyebrow}>SCAN COMPLETE</Text>
@@ -243,6 +267,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: spacing.sm,
   },
+  selfieRing: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.6)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selfieImage: { width: '100%', height: '100%' },
+  headerBadges: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   scoreChip: {
     flexDirection: 'row',
     alignItems: 'center',

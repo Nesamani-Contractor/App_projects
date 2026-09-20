@@ -55,6 +55,7 @@ export default function AnalyzingScreen({ navigation, route }: Props) {
           timestamp: new Date().toISOString(),
           score: 88 + (seed % 10),
           faceAnalysis,
+          photoUri,
         });
       } catch (err) {
         if (cancelled) return;
