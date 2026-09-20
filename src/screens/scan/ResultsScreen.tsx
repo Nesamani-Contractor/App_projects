@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,8 +9,8 @@ import { colors, gradients, radii, spacing, typography } from '../../theme/color
 import { COLOR_SEASONS, pickSeasonForSeed } from '../../data/colorSeasons';
 import { recommendLookForSeason } from '../../data/looks';
 import { FACIAL_TRAITS, pickPraise, SHINE_GUIDE_STEPS } from '../../data/insights';
-import { pickStyleIcon } from '../../data/styleIcons';
 import { getProductRecs } from '../../data/products';
+import { SkinConcernSeverity } from '../../types/faceAnalysis';
 import { SectionCard } from '../../components/SectionCard';
 import { GoldBadge } from '../../components/GoldBadge';
 import { GradientButton } from '../../components/GradientButton';
@@ -20,16 +20,22 @@ import { useAppState } from '../../context/AppStateContext';
 
 type Props = NativeStackScreenProps<ScanStackParamList, 'Results'>;
 
+const severityColor = (severity: SkinConcernSeverity) => {
+  if (severity === 'low') return colors.success;
+  if (severity === 'moderate') return colors.goldDeep;
+  return colors.berry;
+};
+
 export default function ResultsScreen({ route, navigation }: Props) {
-  const { seasonId, praiseIndex, timestamp, score } = route.params;
+  const { seasonId, praiseIndex, timestamp, score, faceAnalysis } = route.params;
   const { isPremium } = useAppState();
   const season = useMemo(
     () => COLOR_SEASONS.find((s) => s.id === seasonId) ?? pickSeasonForSeed(0),
     [seasonId]
   );
   const praise = pickPraise(praiseIndex);
-  const styleIcon = pickStyleIcon(praiseIndex);
   const products = getProductRecs(season.id);
+  const topCelebrityMatch = faceAnalysis.celebrityMatches[0];
 
   const goChooseLook = () => {
     (navigation.getParent() as any)?.navigate('LooksTab', {
@@ -118,15 +124,72 @@ export default function ResultsScreen({ route, navigation }: Props) {
           ))}
         </SectionCard>
 
+        <SectionCard
+          icon="brush-outline"
+          title="Makeup Review"
+          subtitle="How your current makeup is reading on camera"
+        >
+          <View style={styles.scoreRow}>
+            <Text style={styles.bodyText}>{faceAnalysis.makeupReview.summary}</Text>
+            <View style={styles.miniScoreChip}>
+              <Text style={styles.miniScoreChipText}>{faceAnalysis.makeupReview.overallScore}</Text>
+            </View>
+          </View>
+          {faceAnalysis.makeupReview.touchUps.map((tip) => (
+            <View key={tip.id} style={styles.traitRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.traitLabel}>{tip.area}</Text>
+                <Text style={styles.traitNote}>{tip.issue}</Text>
+                <Text style={[styles.traitNote, styles.suggestionText]}>{tip.suggestion}</Text>
+              </View>
+            </View>
+          ))}
+        </SectionCard>
+
+        <SectionCard
+          icon="water-outline"
+          title="Skin Analysis"
+          subtitle="Proactive recommendations for what we're seeing"
+        >
+          <View style={styles.scoreRow}>
+            <Text style={styles.bodyText}>Overall skin score</Text>
+            <View style={styles.miniScoreChip}>
+              <Text style={styles.miniScoreChipText}>{faceAnalysis.skin.overallScore}</Text>
+            </View>
+          </View>
+          {faceAnalysis.skin.concerns.map((concern) => (
+            <View key={concern.id} style={styles.traitRow}>
+              <View style={{ flex: 1 }}>
+                <View style={styles.concernHeaderRow}>
+                  <Text style={styles.traitLabel}>{concern.label}</Text>
+                  <View style={[styles.severityDot, { backgroundColor: severityColor(concern.severity) }]} />
+                </View>
+                <Text style={styles.traitNote}>{concern.recommendation}</Text>
+              </View>
+              <View style={styles.traitValueChip}>
+                <Text style={styles.traitValueText}>{concern.score}</Text>
+              </View>
+            </View>
+          ))}
+        </SectionCard>
+
         <PremiumGate locked={!isPremium} onUnlock={goPaywall}>
           <SectionCard
             icon="people-outline"
-            title="Style Icon Match"
-            subtitle="Who your features & coloring resemble"
+            title="Celebrity Look-Alike"
+            subtitle="Who your features & makeup resemble"
           >
-            <Text style={styles.styleIconName}>{styleIcon.name}</Text>
-            <Text style={styles.seasonSubtitle}>{styleIcon.era}</Text>
-            <Text style={styles.bodyText}>{styleIcon.description}</Text>
+            {topCelebrityMatch ? (
+              <View style={styles.celebrityRow}>
+                <Image source={{ uri: topCelebrityMatch.imageUrl }} style={styles.celebrityPhoto} />
+                <View style={{ flex: 1, marginLeft: spacing.md }}>
+                  <Text style={styles.styleIconName}>{topCelebrityMatch.name}</Text>
+                  <Text style={styles.seasonSubtitle}>{topCelebrityMatch.similarity}% match</Text>
+                </View>
+              </View>
+            ) : (
+              <Text style={styles.bodyText}>No confident celebrity match found for this scan.</Text>
+            )}
           </SectionCard>
         </PremiumGate>
 
@@ -247,6 +310,20 @@ const styles = StyleSheet.create({
   },
   traitValueText: { fontFamily: typography.bodySemiBold, fontSize: 11.5, color: colors.berry },
   styleIconName: { fontFamily: typography.display, fontSize: 18, color: colors.plum },
+  scoreRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
+  miniScoreChip: {
+    backgroundColor: colors.blush,
+    borderRadius: radii.pill,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginLeft: spacing.sm,
+  },
+  miniScoreChipText: { fontFamily: typography.bodySemiBold, fontSize: 13, color: colors.berry },
+  suggestionText: { color: colors.berry, marginTop: 3 },
+  concernHeaderRow: { flexDirection: 'row', alignItems: 'center' },
+  severityDot: { width: 8, height: 8, borderRadius: 4, marginLeft: 8 },
+  celebrityRow: { flexDirection: 'row', alignItems: 'center' },
+  celebrityPhoto: { width: 64, height: 64, borderRadius: 32, backgroundColor: colors.blush },
   productRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
