@@ -27,11 +27,15 @@ export const AppStateProvider = ({ children }: { children: React.ReactNode }) =>
 
   useEffect(() => {
     (async () => {
+      const minSplashDelay = new Promise((resolve) => setTimeout(resolve, 1500));
       try {
-        const [onboarded, premium, style] = await Promise.all([
-          AsyncStorage.getItem(KEYS.onboarded),
-          AsyncStorage.getItem(KEYS.premium),
-          AsyncStorage.getItem(KEYS.styleAnswer),
+        const [[onboarded, premium, style]] = await Promise.all([
+          Promise.all([
+            AsyncStorage.getItem(KEYS.onboarded),
+            AsyncStorage.getItem(KEYS.premium),
+            AsyncStorage.getItem(KEYS.styleAnswer),
+          ]),
+          minSplashDelay,
         ]);
         setHasOnboarded(onboarded === 'true');
         setIsPremium(premium === 'true');

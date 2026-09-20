@@ -11,6 +11,7 @@ import LooksStackNavigator from './LooksStackNavigator';
 import DashboardStackNavigator from './DashboardStackNavigator';
 import OnboardingNavigator from './OnboardingNavigator';
 import PaywallScreen from '../screens/premium/PaywallScreen';
+import SplashHomeScreen from '../screens/SplashHomeScreen';
 import { colors } from '../theme/colors';
 import { useAppState } from '../context/AppStateContext';
 
@@ -86,7 +87,7 @@ function MainStackNavigator() {
 export default function RootNavigator() {
   const { ready, hasOnboarded } = useAppState();
 
-  if (!ready) return null;
+  if (!ready) return <SplashHomeScreen />;
 
   return (
     <NavigationContainer theme={navTheme}>
