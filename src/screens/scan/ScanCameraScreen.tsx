@@ -3,6 +3,7 @@ import {
   Dimensions,
   Modal,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -101,7 +102,9 @@ export default function ScanCameraScreen({ navigation }: Props) {
         <CameraView ref={cameraRef} style={StyleSheet.absoluteFill} facing={facing} />
       ) : (
         <LinearGradient
-          colors={['#2E1B29', '#4A2740', '#2E1B29']}
+          colors={gradients.heroSignature}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
           style={StyleSheet.absoluteFill}
         />
       )}
@@ -109,8 +112,12 @@ export default function ScanCameraScreen({ navigation }: Props) {
       {!cameraReady && <AnimatedFacesBackdrop />}
 
       {!cameraReady && (
-        <View style={styles.permissionOverlay}>
-          <Ionicons name="camera-outline" size={40} color={colors.goldLight} />
+        <ScrollView
+          style={styles.permissionOverlay}
+          contentContainerStyle={styles.permissionContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <Ionicons name="camera-outline" size={36} color={colors.goldLight} />
           <Text style={styles.permissionTitle}>Camera access needed</Text>
           <Text style={styles.permissionBody}>
             Shine Me's AI Face Reader needs your camera to analyze your face and deliver your
@@ -120,10 +127,13 @@ export default function ScanCameraScreen({ navigation }: Props) {
             <Text style={styles.permissionBtnText}>Enable Camera</Text>
           </Pressable>
           <RotatingText phrases={SCAN_FEATURE_PHRASES} style={styles.featureTicker} interval={2800} />
-        </View>
+          <View style={styles.inlineGuidelines}>
+            <DoDontCard />
+          </View>
+        </ScrollView>
       )}
 
-      <CircularViewfinder scanning={scanning} />
+      {cameraReady && <CircularViewfinder scanning={scanning} />}
 
       <SafeAreaView style={styles.overlayContent} pointerEvents="box-none">
         <View style={styles.topBar}>
@@ -142,13 +152,15 @@ export default function ScanCameraScreen({ navigation }: Props) {
           </Pressable>
         </View>
 
-        <View style={styles.centerHint} pointerEvents="none">
-          {scanning ? (
-            <Text style={styles.hintText}>Analyzing your beautiful face…</Text>
-          ) : (
-            <RotatingText phrases={SCAN_HINT_PHRASES} style={styles.hintText} interval={2600} />
-          )}
-        </View>
+        {cameraReady && (
+          <View style={styles.centerHint} pointerEvents="none">
+            {scanning ? (
+              <Text style={styles.hintText}>Analyzing your beautiful face…</Text>
+            ) : (
+              <RotatingText phrases={SCAN_HINT_PHRASES} style={styles.hintText} interval={2600} />
+            )}
+          </View>
+        )}
 
         <View style={styles.bottomArea}>
           <View style={styles.captureRow}>
@@ -203,7 +215,7 @@ export default function ScanCameraScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  fill: { flex: 1, backgroundColor: '#1E1420' },
+  fill: { flex: 1, backgroundColor: '#5C1B54' },
   overlayContent: { flex: 1, justifyContent: 'space-between' },
   topBar: {
     flexDirection: 'row',
@@ -310,9 +322,18 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+  },
+  permissionContent: {
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 40,
+    paddingHorizontal: 32,
+    paddingTop: 90,
+    paddingBottom: 200,
+  },
+  inlineGuidelines: {
+    width: '100%',
+    marginTop: 28,
   },
   permissionTitle: {
     fontFamily: typography.heading,
