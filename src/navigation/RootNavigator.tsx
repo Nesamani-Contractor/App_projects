@@ -4,6 +4,7 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { RootTabParamList, MainStackParamList } from './types';
 import ScanStackNavigator from './ScanStackNavigator';
@@ -12,7 +13,7 @@ import DashboardStackNavigator from './DashboardStackNavigator';
 import OnboardingNavigator from './OnboardingNavigator';
 import PaywallScreen from '../screens/premium/PaywallScreen';
 import SplashHomeScreen from '../screens/SplashHomeScreen';
-import { colors } from '../theme/colors';
+import { colors, gradients, radii } from '../theme/colors';
 import { useAppState } from '../context/AppStateContext';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
@@ -50,13 +51,15 @@ function MainTabs() {
         tabBarLabelStyle: styles.tabBarLabel,
         tabBarIcon: ({ focused, color, size }) => {
           const icons = ICONS[route.name];
-          return (
-            <Ionicons
-              name={focused ? icons.active : icons.inactive}
-              size={size ?? 22}
-              color={color}
-            />
-          );
+          const iconName = focused ? icons.active : icons.inactive;
+          if (focused) {
+            return (
+              <LinearGradient colors={gradients.goldButton} style={styles.activeTabBadge}>
+                <Ionicons name={iconName} size={size ?? 20} color={colors.ivory} />
+              </LinearGradient>
+            );
+          }
+          return <Ionicons name={iconName} size={size ?? 22} color={color} />;
         },
       })}
     >
@@ -112,5 +115,17 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: 'Poppins_500Medium',
     marginTop: -2,
+  },
+  activeTabBadge: {
+    width: 42,
+    height: 30,
+    borderRadius: radii.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: colors.goldDeep,
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
   },
 });

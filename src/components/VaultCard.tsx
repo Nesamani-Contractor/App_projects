@@ -23,14 +23,17 @@ export const VaultCard = ({
       {record.photoUri ? (
         <Image source={{ uri: record.photoUri }} style={styles.thumb} />
       ) : (
-        <LinearGradient
-          colors={(look?.gradient ?? gradients.heroBackground) as any}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.thumb}
-        >
-          <Ionicons name={look?.icon ?? 'sparkles-outline'} size={20} color={colors.ivory} />
-        </LinearGradient>
+        <View style={styles.gradientThumbWrap}>
+          <LinearGradient
+            colors={(look?.gradient ?? gradients.heroBackground) as any}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.gradientThumb}
+          >
+            <LinearGradient colors={gradients.cardSheen} style={styles.thumbSheen} />
+            <Ionicons name={look?.icon ?? 'sparkles-outline'} size={22} color={colors.ivory} />
+          </LinearGradient>
+        </View>
       )}
 
       <View style={styles.middle}>
@@ -65,13 +68,33 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(229,72,122,0.14)',
   },
   thumb: {
-    width: 52,
-    height: 52,
+    width: 56,
+    height: 56,
     borderRadius: radii.md,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.sm,
   },
+  gradientThumbWrap: {
+    borderRadius: radii.md,
+    marginRight: spacing.sm,
+    shadowColor: colors.berry,
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+  },
+  gradientThumb: {
+    width: 56,
+    height: 56,
+    borderRadius: radii.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.55)',
+  },
+  thumbSheen: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
   middle: { flex: 1 },
   title: { fontFamily: typography.heading, fontSize: 15, color: colors.plum },
   subtitle: { fontFamily: typography.bodyMedium, fontSize: 12, color: colors.berry, marginTop: 1 },

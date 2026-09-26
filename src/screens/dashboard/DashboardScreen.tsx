@@ -35,7 +35,14 @@ export default function DashboardScreen({ navigation }: Props) {
 
   return (
     <View style={styles.fill}>
-      <LinearGradient colors={gradients.vaultHeader} style={styles.header}>
+      <LinearGradient
+        colors={gradients.heroSignature}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.header}
+      >
+        <View style={styles.headerBlobLarge} pointerEvents="none" />
+        <View style={styles.headerBlobSmall} pointerEvents="none" />
         <SafeAreaView edges={['top']}>
           <View style={styles.headerTop}>
             <View>
@@ -43,11 +50,13 @@ export default function DashboardScreen({ navigation }: Props) {
               <Text style={styles.title}>Beauty History</Text>
             </View>
             <Pressable
-              style={styles.avatarBadge}
+              style={styles.avatarBadgeWrap}
               onLongPress={handleRestartOnboarding}
               delayLongPress={1200}
             >
-              <Ionicons name="sparkles" size={20} color={colors.ivory} />
+              <LinearGradient colors={gradients.iconBadge} style={styles.avatarBadge}>
+                <Ionicons name="sparkles" size={20} color={colors.plum} />
+              </LinearGradient>
             </Pressable>
           </View>
 
@@ -125,6 +134,25 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.lg,
     borderBottomLeftRadius: radii.xl,
     borderBottomRightRadius: radii.xl,
+    overflow: 'hidden',
+  },
+  headerBlobLarge: {
+    position: 'absolute',
+    top: -70,
+    right: -50,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+  },
+  headerBlobSmall: {
+    position: 'absolute',
+    bottom: -40,
+    left: -30,
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    backgroundColor: 'rgba(255,255,255,0.08)',
   },
   headerTop: {
     flexDirection: 'row',
@@ -139,11 +167,17 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.85)',
   },
   title: { fontFamily: typography.display, fontSize: 26, color: colors.ivory, marginTop: 2 },
+  avatarBadgeWrap: {
+    shadowColor: colors.plum,
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+  },
   avatarBadge: {
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center',
     justifyContent: 'center',
   },
