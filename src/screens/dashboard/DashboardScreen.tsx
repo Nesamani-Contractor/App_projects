@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,12 +13,25 @@ import { useAppState } from '../../context/AppStateContext';
 type Props = NativeStackScreenProps<DashboardStackParamList, 'Dashboard'>;
 
 export default function DashboardScreen({ navigation }: Props) {
-  const { isPremium, scanHistory } = useAppState();
+  const { isPremium, scanHistory, resetOnboarding } = useAppState();
   const allRecords = [...scanHistory, ...MOCK_HISTORY];
   const { totalScans, avgScore, favoriteLook } = getHistoryStats(allRecords);
   const sorted = [...allRecords].sort(
     (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
   );
+
+  const handleRestartOnboarding = () => {
+    const message = "This replays the Mago journey from the start. It won't touch your scan history.";
+    // react-native-web ships Alert.alert as a no-op, so the web preview needs window.confirm instead.
+    if (Platform.OS === 'web') {
+      if (window.confirm(`Restart onboarding?\n\n${message}`)) resetOnboarding();
+      return;
+    }
+    Alert.alert('Restart onboarding?', message, [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Restart', style: 'destructive', onPress: resetOnboarding },
+    ]);
+  };
 
   return (
     <View style={styles.fill}>
@@ -29,9 +42,13 @@ export default function DashboardScreen({ navigation }: Props) {
               <Text style={styles.eyebrow}>YOUR SHINE VAULT</Text>
               <Text style={styles.title}>Beauty History</Text>
             </View>
-            <View style={styles.avatarBadge}>
+            <Pressable
+              style={styles.avatarBadge}
+              onLongPress={handleRestartOnboarding}
+              delayLongPress={1200}
+            >
               <Ionicons name="sparkles" size={20} color={colors.ivory} />
-            </View>
+            </Pressable>
           </View>
 
           <View style={styles.statsRow}>

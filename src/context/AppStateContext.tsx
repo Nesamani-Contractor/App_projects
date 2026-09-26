@@ -15,6 +15,7 @@ type AppState = {
   unlockPremium: () => void;
   addScanRecord: (record: ScanRecord) => void;
   saveJourneyAnswers: (answers: JourneyAnswers) => void;
+  resetOnboarding: () => void;
 };
 
 const AppStateContext = createContext<AppState | undefined>(undefined);
@@ -95,6 +96,13 @@ export const AppStateProvider = ({ children }: { children: React.ReactNode }) =>
     AsyncStorage.setItem(KEYS.journeyAnswers, JSON.stringify(answers)).catch(() => {});
   };
 
+  const resetOnboarding = () => {
+    setHasOnboarded(false);
+    setStyleAnswer(undefined);
+    setJourneyAnswers(undefined);
+    AsyncStorage.multiRemove([KEYS.onboarded, KEYS.styleAnswer, KEYS.journeyAnswers]).catch(() => {});
+  };
+
   const value = useMemo(
     () => ({
       ready,
@@ -107,6 +115,7 @@ export const AppStateProvider = ({ children }: { children: React.ReactNode }) =>
       unlockPremium,
       addScanRecord,
       saveJourneyAnswers,
+      resetOnboarding,
     }),
     [ready, hasOnboarded, isPremium, styleAnswer, scanHistory, journeyAnswers]
   );
