@@ -12,7 +12,7 @@ import { colors, gradients, radii, spacing, typography } from '../../theme/color
 import { useAppState } from '../../context/AppStateContext';
 
 type Props =
-  | NativeStackScreenProps<MainStackParamList, 'Paywall'>
+  | NativeStackScreenProps<MainStackParamList, 'PaywallModal'>
   | NativeStackScreenProps<OnboardingStackParamList, 'Paywall'>;
 
 export default function PaywallScreen({ navigation, route }: Props) {

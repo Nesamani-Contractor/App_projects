@@ -54,7 +54,7 @@ export default function ResultsScreen({ route, navigation }: Props) {
   };
 
   const goPaywall = () => {
-    (navigation.getParent() as any)?.getParent()?.navigate('Paywall', { source: 'results' });
+    (navigation.getParent() as any)?.getParent()?.navigate('PaywallModal', { source: 'results' });
   };
 
   return (

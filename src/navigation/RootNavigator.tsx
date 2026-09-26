@@ -79,7 +79,7 @@ function MainStackNavigator() {
     <MainStack.Navigator screenOptions={{ headerShown: false }}>
       <MainStack.Screen name="Tabs" component={MainTabs} />
       <MainStack.Screen
-        name="Paywall"
+        name="PaywallModal"
         component={PaywallScreen}
         options={{ presentation: 'modal' }}
       />

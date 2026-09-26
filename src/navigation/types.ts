@@ -25,7 +25,7 @@ export type RootTabParamList = {
 
 export type MainStackParamList = {
   Tabs: undefined;
-  Paywall: { source?: string } | undefined;
+  PaywallModal: { source?: string } | undefined;
 };
 
 export type OnboardingStackParamList = {

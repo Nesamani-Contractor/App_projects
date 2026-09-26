@@ -86,7 +86,7 @@ export default function DashboardScreen({ navigation }: Props) {
       >
         {!isPremium && (
           <Pressable
-            onPress={() => (navigation.getParent() as any)?.getParent()?.navigate('Paywall', { source: 'dashboard' })}
+            onPress={() => (navigation.getParent() as any)?.getParent()?.navigate('PaywallModal', { source: 'dashboard' })}
           >
             <LinearGradient colors={gradients.glamUpPaywall} style={styles.premiumBanner}>
               <Ionicons name="diamond" size={20} color={colors.ivory} />

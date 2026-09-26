@@ -23,7 +23,7 @@ export default function ChooseLookScreen({ navigation, route }: Props) {
 
   const openLook = (id: LookId) => {
     if (!isPremium && PREMIUM_LOCKED_LOOKS.includes(id)) {
-      (navigation.getParent() as any)?.getParent()?.navigate('Paywall', { source: 'looks' });
+      (navigation.getParent() as any)?.getParent()?.navigate('PaywallModal', { source: 'looks' });
       return;
     }
     navigation.navigate('LookDetail', { lookId: id });
