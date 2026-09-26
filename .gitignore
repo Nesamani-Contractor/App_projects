@@ -33,6 +33,13 @@ yarn-error.*
 # local env files
 .env*.local
 
+# face-analysis server
+server/node_modules/
+server/.env
+server/celebrity-photos/
+server/public/celebrities/*
+!server/public/celebrities/.gitkeep
+
 # typescript
 *.tsbuildinfo
 

@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import {
+  Alert,
   Dimensions,
   Modal,
   Pressable,
@@ -38,18 +39,24 @@ export default function ScanCameraScreen({ navigation }: Props) {
     if (scanning) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setScanning(true);
-
     let photoUri: string | undefined;
     try {
-      const photo = await cameraRef.current?.takePictureAsync({ quality: 0.5 });
+      const photo = await cameraRef.current?.takePictureAsync({ quality: 0.6 });
       photoUri = photo?.uri;
     } catch {
       photoUri = undefined;
     }
 
+    if (!photoUri) {
+      setScanning(false);
+      Alert.alert('Scan failed', 'We couldn’t capture a photo. Please try again.');
+      return;
+    }
+
+    const capturedUri = photoUri;
     setTimeout(() => {
       setScanning(false);
-      navigation.navigate('Analyzing', { photoUri });
+      navigation.navigate('Analyzing', { photoUri: capturedUri });
     }, 1400);
   }, [navigation, scanning]);
 

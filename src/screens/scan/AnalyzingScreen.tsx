@@ -1,27 +1,33 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
+import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ScanStackParamList } from '../../navigation/types';
 import { colors, gradients, typography } from '../../theme/colors';
 import { COLOR_SEASONS } from '../../data/colorSeasons';
+import { analyzeFace, FaceAnalysisError } from '../../services/faceAnalysisApi';
 
 type Props = NativeStackScreenProps<ScanStackParamList, 'Analyzing'>;
 
 const STEPS = [
   { icon: 'color-palette-outline' as const, label: 'Reading your undertone…' },
   { icon: 'happy-outline' as const, label: 'Mapping your facial features…' },
-  { icon: 'sparkles-outline' as const, label: 'Finding your perfect colors…' },
-  { icon: 'heart-outline' as const, label: 'Writing your Shine Me guide…' },
+  { icon: 'sparkles-outline' as const, label: 'Analyzing your skin & makeup…' },
+  { icon: 'heart-outline' as const, label: 'Finding your celebrity match…' },
 ];
 
 export default function AnalyzingScreen({ navigation, route }: Props) {
-  const photoUri = route.params?.photoUri;
+  const { photoUri } = route.params;
   const [stepIndex, setStepIndex] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
   const spin = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    setError(null);
+    setStepIndex(0);
+
     const spinLoop = Animated.loop(
       Animated.timing(spin, {
         toValue: 1,
@@ -32,27 +38,39 @@ export default function AnalyzingScreen({ navigation, route }: Props) {
     );
     spinLoop.start();
 
-    const interval = setInterval(() => {
+    const stepInterval = setInterval(() => {
       setStepIndex((i) => Math.min(i + 1, STEPS.length - 1));
-    }, 750);
+    }, 900);
 
-    const timeout = setTimeout(() => {
-      const seed = Math.floor(Math.random() * 1000);
-      navigation.replace('Results', {
-        seasonId: COLOR_SEASONS[seed % COLOR_SEASONS.length].id,
-        praiseIndex: seed,
-        timestamp: new Date().toISOString(),
-        score: 88 + (seed % 10),
-        photoUri,
-      });
-    }, 3200);
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const faceAnalysis = await analyzeFace(photoUri);
+        if (cancelled) return;
+        const seed = Math.floor(Math.random() * 1000);
+        navigation.replace('Results', {
+          seasonId: COLOR_SEASONS[seed % COLOR_SEASONS.length].id,
+          praiseIndex: seed,
+          timestamp: new Date().toISOString(),
+          score: 88 + (seed % 10),
+          faceAnalysis,
+          photoUri,
+        });
+      } catch (err) {
+        if (cancelled) return;
+        const message =
+          err instanceof FaceAnalysisError ? err.message : 'Something went wrong analyzing your scan.';
+        setError(message);
+      }
+    })();
 
     return () => {
+      cancelled = true;
       spinLoop.stop();
-      clearInterval(interval);
-      clearTimeout(timeout);
+      clearInterval(stepInterval);
     };
-  }, [navigation, spin, photoUri]);
+  }, [navigation, photoUri, spin, attempt]);
 
   const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
 
@@ -69,26 +87,41 @@ export default function AnalyzingScreen({ navigation, route }: Props) {
             />
           </Animated.View>
           <View style={styles.ringInner}>
-            <Ionicons name="sparkles" size={30} color={colors.ivory} />
+            <Ionicons name={error ? 'alert-circle' : 'sparkles'} size={30} color={colors.ivory} />
           </View>
         </View>
 
-        <Text style={styles.title}>Your Shine Me AI{'\n'}is analyzing you</Text>
+        {error ? (
+          <>
+            <Text style={styles.title}>We couldn’t finish{'\n'}analyzing your scan</Text>
+            <Text style={styles.errorText}>{error}</Text>
+            <Pressable style={styles.retryBtn} onPress={() => setAttempt((a) => a + 1)}>
+              <Text style={styles.retryBtnText}>Try Again</Text>
+            </Pressable>
+            <Pressable style={styles.backBtn} onPress={() => navigation.popToTop()}>
+              <Text style={styles.backBtnText}>Retake Photo</Text>
+            </Pressable>
+          </>
+        ) : (
+          <>
+            <Text style={styles.title}>Your Shine Me AI{'\n'}is analyzing you</Text>
 
-        <View style={styles.stepsWrap}>
-          {STEPS.map((step, i) => (
-            <View key={step.label} style={styles.stepRow}>
-              <Ionicons
-                name={i <= stepIndex ? 'checkmark-circle' : step.icon}
-                size={16}
-                color={i <= stepIndex ? colors.ivory : 'rgba(255,255,255,0.45)'}
-              />
-              <Text style={[styles.stepText, i <= stepIndex && styles.stepTextActive]}>
-                {step.label}
-              </Text>
+            <View style={styles.stepsWrap}>
+              {STEPS.map((step, i) => (
+                <View key={step.label} style={styles.stepRow}>
+                  <Ionicons
+                    name={i <= stepIndex ? 'checkmark-circle' : step.icon}
+                    size={16}
+                    color={i <= stepIndex ? colors.ivory : 'rgba(255,255,255,0.45)'}
+                  />
+                  <Text style={[styles.stepText, i <= stepIndex && styles.stepTextActive]}>
+                    {step.label}
+                  </Text>
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
+          </>
+        )}
       </View>
     </LinearGradient>
   );
@@ -127,4 +160,29 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   stepTextActive: { color: colors.ivory, fontFamily: typography.bodyMedium },
+  errorText: {
+    fontFamily: typography.body,
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.85)',
+    textAlign: 'center',
+    lineHeight: 19,
+    marginBottom: 24,
+  },
+  retryBtn: {
+    backgroundColor: colors.gold,
+    paddingHorizontal: 28,
+    paddingVertical: 12,
+    borderRadius: 999,
+  },
+  retryBtnText: {
+    fontFamily: typography.bodySemiBold,
+    fontSize: 14,
+    color: colors.plum,
+  },
+  backBtn: { marginTop: 14 },
+  backBtnText: {
+    fontFamily: typography.bodyMedium,
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.8)',
+  },
 });
