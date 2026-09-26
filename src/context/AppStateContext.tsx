@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LookId } from '../data/looks';
 import { ScanRecord } from '../data/mockHistory';
+import { JourneyAnswers } from '../data/onboardingJourney';
 
 type AppState = {
   ready: boolean;
@@ -9,9 +10,11 @@ type AppState = {
   isPremium: boolean;
   styleAnswer?: LookId;
   scanHistory: ScanRecord[];
+  journeyAnswers?: JourneyAnswers;
   completeOnboarding: (styleAnswer?: LookId) => void;
   unlockPremium: () => void;
   addScanRecord: (record: ScanRecord) => void;
+  saveJourneyAnswers: (answers: JourneyAnswers) => void;
 };
 
 const AppStateContext = createContext<AppState | undefined>(undefined);
@@ -21,6 +24,7 @@ const KEYS = {
   premium: 'shineme.isPremium',
   styleAnswer: 'shineme.styleAnswer',
   scanHistory: 'shineme.scanHistory',
+  journeyAnswers: 'shineme.journeyAnswers',
 };
 
 export const AppStateProvider = ({ children }: { children: React.ReactNode }) => {
@@ -29,17 +33,19 @@ export const AppStateProvider = ({ children }: { children: React.ReactNode }) =>
   const [isPremium, setIsPremium] = useState(false);
   const [styleAnswer, setStyleAnswer] = useState<LookId | undefined>(undefined);
   const [scanHistory, setScanHistory] = useState<ScanRecord[]>([]);
+  const [journeyAnswers, setJourneyAnswers] = useState<JourneyAnswers | undefined>(undefined);
 
   useEffect(() => {
     (async () => {
       const minSplashDelay = new Promise((resolve) => setTimeout(resolve, 1500));
       try {
-        const [[onboarded, premium, style, history]] = await Promise.all([
+        const [[onboarded, premium, style, history, journey]] = await Promise.all([
           Promise.all([
             AsyncStorage.getItem(KEYS.onboarded),
             AsyncStorage.getItem(KEYS.premium),
             AsyncStorage.getItem(KEYS.styleAnswer),
             AsyncStorage.getItem(KEYS.scanHistory),
+            AsyncStorage.getItem(KEYS.journeyAnswers),
           ]),
           minSplashDelay,
         ]);
@@ -49,6 +55,11 @@ export const AppStateProvider = ({ children }: { children: React.ReactNode }) =>
         if (history) {
           try {
             setScanHistory(JSON.parse(history));
+          } catch {}
+        }
+        if (journey) {
+          try {
+            setJourneyAnswers(JSON.parse(journey));
           } catch {}
         }
       } finally {
@@ -79,6 +90,11 @@ export const AppStateProvider = ({ children }: { children: React.ReactNode }) =>
     });
   };
 
+  const saveJourneyAnswers = (answers: JourneyAnswers) => {
+    setJourneyAnswers(answers);
+    AsyncStorage.setItem(KEYS.journeyAnswers, JSON.stringify(answers)).catch(() => {});
+  };
+
   const value = useMemo(
     () => ({
       ready,
@@ -86,11 +102,13 @@ export const AppStateProvider = ({ children }: { children: React.ReactNode }) =>
       isPremium,
       styleAnswer,
       scanHistory,
+      journeyAnswers,
       completeOnboarding,
       unlockPremium,
       addScanRecord,
+      saveJourneyAnswers,
     }),
-    [ready, hasOnboarded, isPremium, styleAnswer, scanHistory]
+    [ready, hasOnboarded, isPremium, styleAnswer, scanHistory, journeyAnswers]
   );
 
   return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>;

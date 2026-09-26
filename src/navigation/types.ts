@@ -30,8 +30,7 @@ export type MainStackParamList = {
 
 export type OnboardingStackParamList = {
   Welcome: undefined;
-  GoalQuiz: undefined;
-  StyleQuiz: { goalId: string };
-  CreatingProfile: { goalId: string; styleId: string };
+  Journey: undefined;
+  CreatingProfile: { lookId: LookId };
   Paywall: { source: 'onboarding'; recommendedLookId?: LookId };
 };

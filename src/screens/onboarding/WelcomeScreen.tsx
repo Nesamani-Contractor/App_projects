@@ -63,7 +63,7 @@ export default function WelcomeScreen({ navigation }: Props) {
               label="Get Started"
               icon="arrow-forward"
               variant="white"
-              onPress={() => navigation.navigate('GoalQuiz')}
+              onPress={() => navigation.navigate('Journey')}
             />
           </View>
         </ScrollView>

@@ -4,7 +4,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { OnboardingStackParamList } from '../../navigation/types';
-import { STYLE_OPTIONS } from '../../data/onboardingQuiz';
 import { colors, gradients, typography } from '../../theme/colors';
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, 'CreatingProfile'>;
@@ -18,14 +17,13 @@ export default function CreatingProfileScreen({ navigation, route }: Props) {
     );
     loop.start();
     const t = setTimeout(() => {
-      const mappedLook = STYLE_OPTIONS.find((s) => s.id === route.params.styleId)?.mapsToLook;
-      navigation.replace('Paywall', { source: 'onboarding', recommendedLookId: mappedLook });
+      navigation.replace('Paywall', { source: 'onboarding', recommendedLookId: route.params.lookId });
     }, 2000);
     return () => {
       loop.stop();
       clearTimeout(t);
     };
-  }, [navigation, spin, route.params.styleId]);
+  }, [navigation, spin, route.params.lookId]);
 
   const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
 
