@@ -1,10 +1,23 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Dimensions, StyleSheet, View } from 'react-native';
-import Svg, { Defs, Mask, Rect, Circle } from 'react-native-svg';
+import Svg, { Defs, Mask, Rect, Circle, Ellipse, Line } from 'react-native-svg';
 import { colors } from '../theme/colors';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 const SIZE = width * 0.72;
+const CX = width / 2;
+const CY = height * 0.42;
+const R = SIZE / 2;
+const CORNER_ANGLES = [45, 135, 225, 315];
+const CORNER_TICKS = CORNER_ANGLES.map((deg) => {
+  const rad = (deg * Math.PI) / 180;
+  return {
+    x1: CX + Math.cos(rad) * (R - 2),
+    y1: CY + Math.sin(rad) * (R - 2),
+    x2: CX + Math.cos(rad) * (R + 14),
+    y2: CY + Math.sin(rad) * (R + 14),
+  };
+});
 
 export const CircularViewfinder = ({ scanning }: { scanning: boolean }) => {
   const pulse = useRef(new Animated.Value(0)).current;
@@ -55,6 +68,30 @@ export const CircularViewfinder = ({ scanning }: { scanning: boolean }) => {
           strokeWidth={1}
           fill="none"
         />
+        {!scanning && (
+          <Ellipse
+            cx="50%"
+            cy="42%"
+            rx={SIZE * 0.28}
+            ry={SIZE * 0.37}
+            stroke="rgba(255,255,255,0.4)"
+            strokeWidth={2}
+            strokeDasharray="6 7"
+            fill="none"
+          />
+        )}
+        {CORNER_TICKS.map((t, i) => (
+          <Line
+            key={i}
+            x1={t.x1}
+            y1={t.y1}
+            x2={t.x2}
+            y2={t.y2}
+            stroke={colors.gold}
+            strokeWidth={3}
+            strokeLinecap="round"
+          />
+        ))}
       </Svg>
 
       {scanning && (

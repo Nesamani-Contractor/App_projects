@@ -6,7 +6,7 @@ export const SCAN_CHIP_PHRASES = [
 ];
 
 export const SCAN_HINT_PHRASES = [
-  'Center your face in the frame',
+  'Fit your face inside the circle',
   'AI Face Reader is ready to read you',
   'Facial Analysis · Color Analysis · Makeup Guide',
   'Get your look recommendation for today',

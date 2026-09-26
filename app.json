@@ -12,7 +12,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.shineme.app",
       "infoPlist": {
-        "NSCameraUsageDescription": "Shine Me uses your camera to analyze your face and find your perfect colors and makeup look."
+        "NSCameraUsageDescription": "Shine Me uses your camera to analyze your face and find your perfect colors and makeup look.",
+        "NSPhotoLibraryUsageDescription": "Shine Me needs access to your photo library so you can choose an existing photo for your scan."
       }
     },
     "android": {
@@ -33,6 +34,12 @@
         "expo-camera",
         {
           "cameraPermission": "Shine Me uses your camera to analyze your face and find your perfect colors and makeup look."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Shine Me needs access to your photo library so you can choose an existing photo for your scan."
         }
       ],
       [

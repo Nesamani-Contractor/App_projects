@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -30,6 +31,7 @@ export default function ScanCameraScreen({ navigation }: Props) {
   const [facing, setFacing] = useState<'front' | 'back'>('front');
   const [guidelinesVisible, setGuidelinesVisible] = useState(false);
   const [scanning, setScanning] = useState(false);
+  const [libraryUri, setLibraryUri] = useState<string | undefined>(undefined);
   const cameraRef = useRef<CameraView>(null);
 
   const startScan = useCallback(async () => {
@@ -53,13 +55,43 @@ export default function ScanCameraScreen({ navigation }: Props) {
 
   const handleCapturePress = useCallback(() => {
     if (scanning) return;
+    setLibraryUri(undefined);
     setGuidelinesVisible(true);
   }, [scanning]);
 
+  const handlePickFromLibrary = useCallback(async () => {
+    if (scanning) return;
+    const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!perm.granted) return;
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      quality: 0.7,
+      allowsEditing: true,
+      aspect: [1, 1],
+    });
+    if (result.canceled) return;
+    const uri = result.assets?.[0]?.uri;
+    if (!uri) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    setLibraryUri(uri);
+    setGuidelinesVisible(true);
+  }, [scanning]);
+
+  const handleCloseGuidelines = useCallback(() => {
+    setGuidelinesVisible(false);
+    setLibraryUri(undefined);
+  }, []);
+
   const handleConfirmGuidelines = useCallback(() => {
     setGuidelinesVisible(false);
+    if (libraryUri) {
+      const uri = libraryUri;
+      setLibraryUri(undefined);
+      navigation.navigate('Analyzing', { photoUri: uri });
+      return;
+    }
     startScan();
-  }, [startScan]);
+  }, [libraryUri, navigation, startScan]);
 
   const cameraReady = permission?.granted;
 
@@ -136,7 +168,15 @@ export default function ScanCameraScreen({ navigation }: Props) {
                 <Ionicons name="sparkles" size={26} color={colors.ivory} />
               </LinearGradient>
             </Pressable>
-            <View style={styles.captureSpacer} />
+            <View style={[styles.captureSpacer, styles.captureSideBtnWrap]}>
+              <Pressable
+                onPress={handlePickFromLibrary}
+                disabled={scanning}
+                style={({ pressed }) => [styles.libraryBtn, pressed && { opacity: 0.8 }]}
+              >
+                <Ionicons name="images-outline" size={20} color={colors.ivory} />
+              </Pressable>
+            </View>
           </View>
           <Text style={styles.captureLabel}>
             {scanning ? 'Hold still…' : 'Tap to scan your glow'}
@@ -148,12 +188,13 @@ export default function ScanCameraScreen({ navigation }: Props) {
         visible={guidelinesVisible}
         transparent
         animationType="fade"
-        onRequestClose={() => setGuidelinesVisible(false)}
+        onRequestClose={handleCloseGuidelines}
       >
         <View style={styles.modalBackdrop}>
           <DoDontCard
-            onClose={() => setGuidelinesVisible(false)}
+            onClose={handleCloseGuidelines}
             onConfirm={handleConfirmGuidelines}
+            confirmLabel={libraryUri ? 'Got It, Use Photo' : 'Got It, Start Scan'}
           />
         </View>
       </Modal>
@@ -234,6 +275,15 @@ const styles = StyleSheet.create({
     marginTop: 14,
   },
   captureSpacer: { flex: 1 },
+  captureSideBtnWrap: { alignItems: 'center' },
+  libraryBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   captureOuter: {
     width: 84,
     height: 84,
