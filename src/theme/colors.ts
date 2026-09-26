@@ -50,6 +50,14 @@ export const gradients = {
   chooseForMe: ['#FC7295', '#FB6F95', '#FFAFC3'] as const,
   glamUpOnboarding: ['#FC7295', '#FD8FAB', '#FFAFC3'] as const,
   glamUpPaywall: ['#E5487A', '#FB6F95', '#FD8FAB'] as const,
+
+  // Dynamic multi-stop "signature" gradient + mesh-blob accents for the landing screen
+  heroSignature: ['#5C1B54', '#C93058', '#FB6F95', '#FF9770'] as const,
+  titleGradient: ['#FFE8A3', '#FFAFC3', '#FFFFFF'] as const,
+  blobGold: ['rgba(255,201,119,0.9)', 'rgba(255,201,119,0)'] as const,
+  blobViolet: ['rgba(199,109,214,0.8)', 'rgba(199,109,214,0)'] as const,
+  blobPink: ['rgba(255,143,171,0.85)', 'rgba(255,143,171,0)'] as const,
+  iconBadge: ['#FFE8A3', '#FB6F95'] as const,
 };
 
 export const typography = {

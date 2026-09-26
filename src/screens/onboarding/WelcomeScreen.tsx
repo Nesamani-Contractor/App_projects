@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,13 +7,25 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { OnboardingStackParamList } from '../../navigation/types';
 import { GradientButton } from '../../components/GradientButton';
 import { HeroPhotoCollage } from '../../components/HeroPhotoCollage';
-import { colors, gradients, spacing, typography } from '../../theme/colors';
+import { AnimatedGradientBackdrop } from '../../components/AnimatedGradientBackdrop';
+import { GlassCard } from '../../components/GlassCard';
+import { GradientText } from '../../components/GradientText';
+import { colors, gradients, radii, spacing, typography } from '../../theme/colors';
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, 'Welcome'>;
 
+const { width } = Dimensions.get('window');
+const titleWidth = Math.min(width - spacing.lg * 2, 320);
+
+const FEATURES = [
+  'Scan your face for a color & style analysis',
+  'Get a personalized Shine Me Guide',
+  'Discover the makeup look made for you',
+];
+
 export default function WelcomeScreen({ navigation }: Props) {
   return (
-    <LinearGradient colors={gradients.glamUpOnboarding} style={styles.fill}>
+    <AnimatedGradientBackdrop>
       <SafeAreaView style={styles.fill}>
         <ScrollView
           contentContainerStyle={styles.content}
@@ -21,32 +33,42 @@ export default function WelcomeScreen({ navigation }: Props) {
         >
           <HeroPhotoCollage height={210} />
           <Text style={styles.joinCaption}>Join thousands shining today</Text>
-          <Text style={styles.title}>Shine Me</Text>
+
+          <View style={styles.titleWrap}>
+            <GradientText
+              text="Shine Me"
+              width={titleWidth}
+              height={58}
+              fontSize={42}
+              colors={gradients.titleGradient}
+              fontFamily={typography.display}
+            />
+          </View>
+
           <Text style={styles.tagline}>Your personal AI beauty consultant for the ultimate glow up</Text>
 
-          <View style={styles.featureList}>
-            {[
-              'Scan your face for a color & style analysis',
-              'Get a personalized Shine Me Guide',
-              'Discover the makeup look made for you',
-            ].map((f) => (
+          <GlassCard style={styles.featureCard}>
+            {FEATURES.map((f) => (
               <View style={styles.featureRow} key={f}>
-                <Ionicons name="checkmark-circle" size={18} color={colors.ivory} />
+                <LinearGradient colors={gradients.iconBadge} style={styles.featureIcon}>
+                  <Ionicons name="checkmark" size={13} color={colors.plum} />
+                </LinearGradient>
                 <Text style={styles.featureText}>{f}</Text>
               </View>
             ))}
-          </View>
+          </GlassCard>
 
-          <GradientButton
-            label="Get Started"
-            icon="arrow-forward"
-            variant="white"
-            onPress={() => navigation.navigate('GoalQuiz')}
-            style={{ marginTop: spacing.xl }}
-          />
+          <View style={styles.ctaWrap}>
+            <GradientButton
+              label="Get Started"
+              icon="arrow-forward"
+              variant="white"
+              onPress={() => navigation.navigate('GoalQuiz')}
+            />
+          </View>
         </ScrollView>
       </SafeAreaView>
-    </LinearGradient>
+    </AnimatedGradientBackdrop>
   );
 }
 
@@ -67,12 +89,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
     marginBottom: spacing.xs,
   },
-  title: {
-    fontFamily: typography.display,
-    fontSize: 34,
-    color: colors.ivory,
-    textAlign: 'center',
-  },
+  titleWrap: { alignItems: 'center', justifyContent: 'center' },
   tagline: {
     fontFamily: typography.body,
     fontSize: 14,
@@ -82,12 +99,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     lineHeight: 20,
   },
-  featureList: { marginTop: spacing.xl },
+  featureCard: { marginTop: spacing.xl },
   featureRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm },
+  featureIcon: {
+    width: 26,
+    height: 26,
+    borderRadius: radii.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   featureText: {
     fontFamily: typography.bodyMedium,
     fontSize: 13.5,
     color: colors.ivory,
-    marginLeft: 10,
+    marginLeft: 12,
+    flexShrink: 1,
+  },
+  ctaWrap: {
+    marginTop: spacing.xl,
+    shadowColor: colors.ivory,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    elevation: 8,
   },
 });
