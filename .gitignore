@@ -31,7 +31,12 @@ yarn-error.*
 *.pem
 
 # local env files
+.env
 .env*.local
+
+# backend (real face-reading server)
+server/node_modules/
+server/data/
 
 # typescript
 *.tsbuildinfo

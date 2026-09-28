@@ -1,6 +1,7 @@
 import { COLOR_SEASONS } from './colorSeasons';
-import { LOOKS, LookId } from './looks';
+import { LOOKS, LookId, recommendLookForSeason } from './looks';
 import { pickPraise } from './insights';
+import { RealScanResult } from '../types/scan';
 
 export type ScanRecord = {
   id: string;
@@ -8,8 +9,36 @@ export type ScanRecord = {
   seasonId: string;
   lookId: LookId;
   praise: string;
-  score: number; // "shine score" out of 100
+  score: number; // legacy "shine score", kept for the vault's stat aggregation only — never shown as a rating on a real scan's results
   photoUri?: string;
+  realScan?: RealScanResult;
+};
+
+const REAL_SEASON_TO_LOCAL_ID: Record<RealScanResult['color']['season'], string> = {
+  Spring: 'warm-spring',
+  Summer: 'cool-summer',
+  Autumn: 'deep-autumn',
+  Winter: 'clear-winter',
+};
+
+export const buildScanRecordFromReal = (
+  id: string,
+  timestamp: string,
+  scan: RealScanResult,
+  photoUri?: string
+): ScanRecord => {
+  const seasonId = REAL_SEASON_TO_LOCAL_ID[scan.color.season] ?? 'warm-spring';
+  const lookId = recommendLookForSeason(seasonId);
+  return {
+    id,
+    timestamp,
+    seasonId,
+    lookId,
+    praise: `${scan.face_shape.value} face, ${scan.color.season} coloring`,
+    score: 90,
+    photoUri,
+    realScan: scan,
+  };
 };
 
 const daysAgo = (n: number, hour = 9) => {

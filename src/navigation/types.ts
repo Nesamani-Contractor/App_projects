@@ -1,9 +1,10 @@
 import { LookId } from '../data/looks';
+import { RealScanResult } from '../types/scan';
 
 export type ScanStackParamList = {
   ScanCamera: undefined;
-  Analyzing: { photoUri?: string } | undefined;
-  Results: { seasonId: string; praiseIndex: number; timestamp: string; score: number; photoUri?: string };
+  Analyzing: { photoUri: string };
+  Results: { scanId: string; scan: RealScanResult; timestamp: string; photoUri?: string };
 };
 
 export type LooksStackParamList = {

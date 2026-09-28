@@ -4,8 +4,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ScanStackParamList } from '../../navigation/types';
-import { colors, gradients, typography } from '../../theme/colors';
-import { COLOR_SEASONS } from '../../data/colorSeasons';
+import { colors, gradients, spacing, typography } from '../../theme/colors';
+import { API_BASE_URL } from '../../config/api';
+import { photoUriToBase64 } from '../../utils/photo';
+import { useAppState } from '../../context/AppStateContext';
+import { GradientButton } from '../../components/GradientButton';
 
 type Props = NativeStackScreenProps<ScanStackParamList, 'Analyzing'>;
 
@@ -13,12 +16,14 @@ const STEPS = [
   { icon: 'color-palette-outline' as const, label: 'Reading your undertone…' },
   { icon: 'happy-outline' as const, label: 'Mapping your facial features…' },
   { icon: 'sparkles-outline' as const, label: 'Finding your perfect colors…' },
-  { icon: 'heart-outline' as const, label: 'Writing your Shine Me guide…' },
+  { icon: 'heart-outline' as const, label: 'Checking in with the AI Face Reader…' },
 ];
 
 export default function AnalyzingScreen({ navigation, route }: Props) {
-  const photoUri = route.params?.photoUri;
+  const { photoUri } = route.params;
+  const { journeyAnswers } = useAppState();
   const [stepIndex, setStepIndex] = useState(0);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
   const spin = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -34,27 +39,68 @@ export default function AnalyzingScreen({ navigation, route }: Props) {
 
     const interval = setInterval(() => {
       setStepIndex((i) => Math.min(i + 1, STEPS.length - 1));
-    }, 750);
+    }, 1500);
 
-    const timeout = setTimeout(() => {
-      const seed = Math.floor(Math.random() * 1000);
-      navigation.replace('Results', {
-        seasonId: COLOR_SEASONS[seed % COLOR_SEASONS.length].id,
-        praiseIndex: seed,
-        timestamp: new Date().toISOString(),
-        score: 88 + (seed % 10),
-        photoUri,
-      });
-    }, 3200);
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const imageBase64 = await photoUriToBase64(photoUri);
+        const res = await fetch(`${API_BASE_URL}/api/scan`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageBase64, mediaType: 'image/jpeg', profile: journeyAnswers }),
+        });
+        const body = await res.json();
+        if (cancelled) return;
+
+        if (!res.ok) {
+          setErrorMessage(body.message || "We couldn't read that photo. Please retake it.");
+          return;
+        }
+
+        navigation.replace('Results', {
+          scanId: body.scanId,
+          scan: body.scan,
+          timestamp: new Date().toISOString(),
+          photoUri,
+        });
+      } catch (err: any) {
+        if (!cancelled) {
+          setErrorMessage(
+            `Couldn't reach the Shine Me AI server (${API_BASE_URL}). Make sure the backend in /server is running.`
+          );
+        }
+      }
+    })();
 
     return () => {
+      cancelled = true;
       spinLoop.stop();
       clearInterval(interval);
-      clearTimeout(timeout);
     };
-  }, [navigation, spin, photoUri]);
+  }, [navigation, spin, photoUri, journeyAnswers]);
 
   const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
+
+  if (errorMessage) {
+    return (
+      <LinearGradient colors={gradients.vaultHeader} style={styles.fill}>
+        <View style={styles.center}>
+          <Ionicons name="alert-circle-outline" size={40} color={colors.ivory} />
+          <Text style={styles.title}>Couldn't complete that scan</Text>
+          <Text style={styles.errorText}>{errorMessage}</Text>
+          <GradientButton
+            label="Retake Photo"
+            icon="camera-outline"
+            variant="white"
+            onPress={() => navigation.goBack()}
+            style={{ marginTop: spacing.lg, width: 220 }}
+          />
+        </View>
+      </LinearGradient>
+    );
+  }
 
   return (
     <LinearGradient colors={gradients.vaultHeader} style={styles.fill}>
@@ -79,11 +125,11 @@ export default function AnalyzingScreen({ navigation, route }: Props) {
           {STEPS.map((step, i) => (
             <View key={step.label} style={styles.stepRow}>
               <Ionicons
-                name={i <= stepIndex ? 'checkmark-circle' : step.icon}
+                name={i <= stepIndex ? 'checkmark-circle' : (step.icon as any)}
                 size={16}
                 color={i <= stepIndex ? colors.ivory : 'rgba(255,255,255,0.45)'}
               />
-              <Text style={[styles.stepText, i <= stepIndex && styles.stepTextActive]}>
+              <Text style={[styles.stepText, i > stepIndex && styles.stepTextPending]}>
                 {step.label}
               </Text>
             </View>
@@ -96,35 +142,40 @@ export default function AnalyzingScreen({ navigation, route }: Props) {
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 },
-  ringWrap: { width: 140, height: 140, alignItems: 'center', justifyContent: 'center', marginBottom: 32 },
-  ring: { position: 'absolute', width: 140, height: 140, borderRadius: 70 },
-  ringGradient: { flex: 1, borderRadius: 70 },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.xl },
+  ringWrap: { width: 90, height: 90, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.lg },
+  ring: { width: 90, height: 90, borderRadius: 45, position: 'absolute' },
+  ringGradient: { flex: 1, borderRadius: 45 },
   ringInner: {
-    width: 108,
-    height: 108,
-    borderRadius: 54,
-    backgroundColor: 'rgba(229,72,122,0.85)',
+    width: 74,
+    height: 74,
+    borderRadius: 37,
+    backgroundColor: colors.roseDeep,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.5)',
   },
   title: {
-    fontFamily: typography.display,
-    fontSize: 22,
+    fontFamily: typography.heading,
+    fontSize: 20,
     color: colors.ivory,
     textAlign: 'center',
-    lineHeight: 30,
-    marginBottom: 28,
+    lineHeight: 27,
   },
-  stepsWrap: { width: '100%', gap: 12 },
-  stepRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
-  stepText: {
+  errorText: {
     fontFamily: typography.body,
     fontSize: 13.5,
-    color: 'rgba(255,255,255,0.55)',
+    color: 'rgba(255,255,255,0.85)',
+    textAlign: 'center',
+    marginTop: spacing.sm,
+    lineHeight: 20,
+  },
+  stepsWrap: { marginTop: spacing.xl, alignSelf: 'stretch' },
+  stepRow: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.sm },
+  stepText: {
+    fontFamily: typography.bodyMedium,
+    fontSize: 13.5,
+    color: colors.ivory,
     marginLeft: 10,
   },
-  stepTextActive: { color: colors.ivory, fontFamily: typography.bodyMedium },
+  stepTextPending: { color: 'rgba(255,255,255,0.55)' },
 });

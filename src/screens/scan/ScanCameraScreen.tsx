@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import {
+  Alert,
   Dimensions,
   Modal,
   Pressable,
@@ -42,7 +43,7 @@ export default function ScanCameraScreen({ navigation }: Props) {
 
     let photoUri: string | undefined;
     try {
-      const photo = await cameraRef.current?.takePictureAsync({ quality: 0.5 });
+      const photo = await cameraRef.current?.takePictureAsync({ quality: 0.7 });
       photoUri = photo?.uri;
     } catch {
       photoUri = undefined;
@@ -50,8 +51,12 @@ export default function ScanCameraScreen({ navigation }: Props) {
 
     setTimeout(() => {
       setScanning(false);
+      if (!photoUri) {
+        Alert.alert("Couldn't capture that", 'Please try tapping the capture button again.');
+        return;
+      }
       navigation.navigate('Analyzing', { photoUri });
-    }, 1400);
+    }, 900);
   }, [navigation, scanning]);
 
   const handleCapturePress = useCallback(() => {
